@@ -27,20 +27,20 @@ MAGearRefreshControl is made of four base classes you can use as you wish :
 
 You can add new gears easily with a single method :
 
-   refreshControl.addLinkedGear(0, nbTeeth:16, color: UIColor.blurColor(), angleInDegree: 30)
-   refreshControl.addLinkedGear(0, nbTeeth:32, color: UIColor.redColor(), angleInDegree: 190)
+    refreshControl.addLinkedGear(0, nbTeeth:16, color: UIColor.blurColor(), angleInDegree: 30)
+    refreshControl.addLinkedGear(0, nbTeeth:32, color: UIColor.redColor(), angleInDegree: 190)
 
 
 Now you have to respect the `MAGearRefreshDelegate` protocol :
 
     // Method called to know if the data source is loading or no
     func MAGearRefreshTableHeaderDataSourceIsLoading(view: MAGearRefreshControl) -> Bool {
-    return isLoading
+        return isLoading
     }
 
     // Method called when the pull to refresh move was triggered.
     func MAGearRefreshTableHeaderDidTriggerRefresh(view: MAGearRefreshControl) {
-    refresh()
+        refresh()
     }
 
 The refresh control must be notified of scrolling events and when the data is loaded using `MAGearRefreshScrollViewDidEndDragging`, `MAGearRefreshScrollViewDidScroll`and `MAGearRefreshScrollViewDataSourceDidFinishedLoading` methods. The sample project illustrate when to call these methods.
