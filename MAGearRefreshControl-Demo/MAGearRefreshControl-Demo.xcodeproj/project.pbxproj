@@ -433,6 +433,7 @@
 				83D9CA411B0CC44D00ECA1F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		83D9CA421B0CC44D00ECA1F5 /* Build configuration list for PBXNativeTarget "MAGearRefreshControl-DemoTests" */ = {
 			isa = XCConfigurationList;
@@ -441,6 +442,7 @@
 				83D9CA441B0CC44D00ECA1F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

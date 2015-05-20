@@ -25,7 +25,7 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         refreshControlView = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.size.width, self.tableView.bounds.size.height))
         refreshControlView.backgroundColor =  UIColor.initRGB(34, g: 75, b: 150)
         
-        self.refreshControlView.addInitialGear(12, color: UIColor.initRGB(92, g: 133, b: 236))
+        self.refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236))
         self.refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: 30)
         self.refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190)
         self.refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
@@ -37,6 +37,15 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         self.tableView.addSubview(refreshControlView)
         
     }
+    
+    //MARK: - Orientation methods
+    
+    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+        refreshControlView.frame = CGRectMake(0, -self.tableView.bounds.height, self.view.frame.size.width, self.tableView.bounds.size.height)
+    }
+    
+    
+    //MARK: - Various methods
     
     
     

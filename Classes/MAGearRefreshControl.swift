@@ -205,6 +205,8 @@ class MAGearRefreshControl: UIView {
     /// Ex.  arrayAngles[3] ->   the angle between the 3rd gear and its linked one
     var arrayAngles:[Double] = [0]
     
+    var lastContentOffset:CGFloat = 0
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -234,11 +236,6 @@ class MAGearRefreshControl: UIView {
         switch aState {
             
         case .Pulling:
-            UIView.animateWithDuration(0.5, animations: { () -> Void in
-                for i in 1..<self.arrayViews.count {
-                    self.arrayViews[i].alpha = 0
-                    
-                } }, completion:nil)
             break
             
         case .Normal:
@@ -254,7 +251,12 @@ class MAGearRefreshControl: UIView {
             break
             
         case .Loading:
-            rotate()
+            self.rotate()
+            UIView.animateWithDuration(0.5, animations: { () -> Void in
+                for i in 1..<self.arrayViews.count {
+                    self.arrayViews[i].alpha = 0
+                    
+                } }, completion:nil)
             break
         default:
             break
@@ -359,7 +361,7 @@ class MAGearRefreshControl: UIView {
     }
     
     
-    func addInitialGear(nbTeeth:UInt, color: UIColor) {
+    func addInitialGear(#nbTeeth:UInt, color: UIColor) {
         
         if arrayViews.count > 0  {
             return
@@ -494,9 +496,22 @@ class MAGearRefreshControl: UIView {
         }
     }
     
+    override var frame:CGRect  {
+        didSet {
+            // You can use 'oldValue' to see what it used to be,
+            // and 'highlighted' will be what it was set to.
+            configureWithContentOffsetY(lastContentOffset)
+        }
+    }
+    
 
     func configureWithContentOffsetY(offset:CGFloat)
     {
+        if arrayViews.count == 0 {
+            return
+        }
+        
+        lastContentOffset = offset
         arrayViews[0].center.x = frame.size.width/2
         arrayViews[0].center.y = frame.height - offset/2
         
