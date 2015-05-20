@@ -70,6 +70,7 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
     //MARK: - UIScrollViewDelegate protocol conformance
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
+        NSLog("scrollViewDidScroll : \(scrollView.contentOffset.y)")
         refreshControlView.MAGearRefreshScrollViewDidScroll(scrollView)
     }
     

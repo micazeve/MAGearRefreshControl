@@ -10,19 +10,29 @@ import UIKit
 
 
 
+///MARK: - MAGearRefreshDelegate protocol
 
+
+/// Protocol between the MAGearRefreshControl and its delegate (mostly UITableViewController).
 @objc protocol MAGearRefreshDelegate {
+    
+    /// Method called when the pull to refresh move was triggered.
+    ///
+    /// :param: view The MAGearRefreshControl object.
     func MAGearRefreshTableHeaderDidTriggerRefresh(view:MAGearRefreshControl)
+    
+    /// Method called to know if the data source is loading or no
+    ///
+    /// :param: view The MAGearRefreshControl object.
+    ///
+    /// :returns: true if the datasource is loading, false otherwise
     func MAGearRefreshTableHeaderDataSourceIsLoading(view:MAGearRefreshControl) -> Bool
 }
 
 
 
-
-
-
 /// Multiplicator factor in order to draw the gear correctly. Was set arbitrarily and can be changed.
-let multRadius:UInt = 60
+let multRadius:UInt = 80
 
 
 //MARK: - Gear Class
@@ -74,7 +84,7 @@ class SingleGearView : UIView {
     //MARK: Instance properties
     
     /// Gear linked to this view.
-    var gear:Gear! = nil
+    private var gear:Gear!
     
     /// Color of the gear.
     var gearColor = UIColor.blackColor()
@@ -177,50 +187,81 @@ class SingleGearView : UIView {
 /// This class is used to draw multiples gears in a UIView.
 class MultiGearView : UIView {
     
-    let barreWidth:CGFloat = 20
-    var diametralPitch:UInt = 24
+    //MARK: Instance properties
     
-    var arrayViews:[SingleGearView] = []
-    var arrayBorders:[UIView] = []
+    /// Left border of the view.
+    private var leftBorderView:UIView = UIView()
+    
+    /// Right border of the view.
+    private var rightBorderView:UIView = UIView()
+    
+    /// Margin between the bars and the border of the screen.
+    var barMargin:CGFloat   = 10
+    
+    /// Width of the bars
+    var barWidth:CGFloat    = 20
+    
+    /// Boolean used to display or hide the side bars.
+    var showBars = true {
+        didSet {
+            leftBorderView.hidden   = !showBars
+            rightBorderView.hidden  = !showBars
+        }
+    }
+    
+    /// Diametral pitch of the group of gear
+    private var diametralPitch:UInt = 24
+    
+    /// Array of views of gear
+    private var arrayViews:[SingleGearView] = []
     
     /// Relations between the gears.
     /// Ex.  arrayRelations[3] = 2   ->    the 3rd gear is linked to the 2nd one.
-    var arrayRelations:[Int] = [0]
+    private var arrayRelations:[Int] = [0]
     
     /// Angles between the gears, in degree, according to the unit circle
     /// Ex.  arrayAngles[3] ->   the angle between the 3rd gear and its linked one
-    var arrayAngles:[Double] = [0]
+    private var arrayAngles:[Double] = [0]
     
+ 
+    //MARK: Init methods
+    
+    /// Default initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
     
         clipsToBounds = true
         
-        let view1 = UIView(frame:CGRectMake(10, 0, barreWidth, frame.height))
-        view1.backgroundColor = UIColor.initRGB(92, g: 133, b: 236)
+        leftBorderView = UIView(frame:CGRectMake(barMargin, 0, barWidth, frame.height))
+        leftBorderView.backgroundColor = UIColor.initRGB(92, g: 133, b: 236)
         
         
-        let view2 = UIView(frame:CGRectMake(frame.width - 10 - barreWidth, 0, barreWidth, frame.height))
-        view2.backgroundColor = UIColor.initRGB(92, g: 133, b: 236)
+        rightBorderView = UIView(frame:CGRectMake(frame.width - barMargin - barWidth, 0, barWidth, frame.height))
+        rightBorderView.backgroundColor = UIColor.initRGB(92, g: 133, b: 236)
         
-        arrayBorders = [view1, view2]
         
-        addSubview(view1)
-        addSubview(view2)
-        
+        addSubview(leftBorderView)
+        addSubview(rightBorderView)
     }
     
+    /// Required initializer
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     
+    //MARK: Method to add gears
     
-    
-    func addInitialGear(#nbTeeth:UInt, color: UIColor) {
+    /// Add the initial gear to the view. It is always centered in the view.
+    ///
+    /// :param: nbTeeth Number of teeth of the gear.
+    /// :param: color Color of the gear.
+    ///
+    /// :returns: true if the gear was succesfully created, false otherwise (if at least one gear exists).
+    func addInitialGear(#nbTeeth:UInt, color: UIColor) -> Bool {
         
         if arrayViews.count > 0  {
-            return
+            return false
         }
         
         let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
@@ -228,23 +269,25 @@ class MultiGearView : UIView {
         let view = SingleGearView(gear: gear, gearColor:color)
         view.phase = 0
         
-        addSubview(view)
-        
         view.center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
         
         arrayViews.append(view)
+        self.insertSubview(view, belowSubview: leftBorderView)
         
-        for border in arrayBorders {
-            self.bringSubviewToFront(border)
-        }
-        
+        return true
     }
-    
-    func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) {
-        
-        
-        if gearLinked >= arrayViews.count {
-            return
+    /// Add another gear to the view and link it to another already existing gear
+    ///
+    /// :param: gearLinked Index of the previously created gear
+    /// :param: nbTeeth Number of teeth of the gear.
+    /// :param: color Color of the gear.
+    /// :param: angleInDegree Angle (in degree) between the gear to create and the previous gear, according to the unit circle.
+    ///
+    /// :returns: true if the gear was succesfully created, false otherwise (if the gearLinked index is incorrect).
+    func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
+
+        if gearLinked >= arrayViews.count || gearLinked < 0 {
+            return false
         }
         
         let linkedGearView      = arrayViews[gearLinked]
@@ -265,36 +308,32 @@ class MultiGearView : UIView {
         
         
         var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
-        
-        if phaseNewGearForAngle >= 1 {
-            phaseNewGearForAngle -= 1
+        if gear.nbTeeth%2 == 1 {
+            phaseNewGearForAngle += 0.5
         }
-        
-        
+        phaseNewGearForAngle = phaseNewGearForAngle - trunc(phaseNewGearForAngle)
         
         var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
-        
         var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
         var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
-        
-        
+    
         
         let view = SingleGearView(gear: gear, gearColor:color)
-        addSubview(view)
         view.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
         
         arrayRelations.append(gearLinked)
         arrayAngles.append(angleInDegree)
         view.phase = phaseNewGearForAngle - phaseForNewAngle
         
-        
         arrayViews.append(view)
-        for border in arrayBorders {
-            self.bringSubviewToFront(border)
-        }
-        
+        self.insertSubview(view, belowSubview: leftBorderView)
+        return true
     }
     
+    
+    /// Set the phase for the first gear and calculate it for all the linked gears
+    ///
+    /// :param: phase Phase between 0 and 1 for the first gear.
     func setMainGearPhase(phase:Double) {
         if arrayViews.count == 0  {
             return
@@ -326,12 +365,12 @@ class MultiGearView : UIView {
             let nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
             var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
             
-            
             var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
-            
-            if phaseNewGearForAngle >= 1 {
-                phaseNewGearForAngle -= 1
+            if gear.nbTeeth%2 == 1 {
+                phaseNewGearForAngle += 0.5
             }
+            phaseNewGearForAngle = phaseNewGearForAngle - trunc(phaseNewGearForAngle)
+            
             var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
             
             var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
@@ -352,14 +391,10 @@ class MultiGearView : UIView {
         }
     }
     
-    override var frame:CGRect  {
-        didSet {
-            configureView()
-        }
-    }
+    //MARK: View configuration
     
-    
-    func configureView()
+    /// Method used to reset the position of all the gear according to the view frame. Is used principally when the frame is changed
+    private func configureView()
     {
         if arrayViews.count == 0 {
             return
@@ -389,9 +424,17 @@ class MultiGearView : UIView {
             
         }
         
-        arrayBorders[0].frame = CGRectMake(10,  0, barreWidth, frame.height)
-        arrayBorders[1].frame = CGRectMake(frame.size.width - 10 - barreWidth, 0, barreWidth, frame.height)
+        leftBorderView.frame    = CGRectMake(10,  0, barWidth, frame.height)
+        rightBorderView.frame   = CGRectMake(frame.size.width - 10 - barWidth, 0, barWidth, frame.height)
         
+    }
+    
+    //MARK: Override setFrame
+    
+    override var frame:CGRect  {
+        didSet {
+            configureView()
+        }
     }
 
 }
@@ -400,38 +443,32 @@ class MultiGearView : UIView {
 
 /// This class is used to draw a group of gear and offers the same interactions as an UIRefreshControl
 
-class MAGearRefreshControl: UIView {
+class MAGearRefreshControl: MultiGearView {
     
+    //MARK: Instance properties
     
+    /// Enum representing the different state of the refresh control
     enum MAGearRefreshState: UInt8 {
-        case Pulling
-        case Normal
-        case Loading
+        case Normal         // The user is pulling but hasn't reach the activation threshold yet
+        case Pulling        // The user is still pulling and has passed the activation threshold
+        case Loading        // The refresh control is animating
     }
     
+    /// State of the refresh control
+    private var state = MAGearRefreshState.Normal
+    
+    /// Delegate conforming to the MAGearRefreshDelegate protocol. Most of time it's an UITableViewController
     var delegate:MAGearRefreshDelegate?
-    var state = MAGearRefreshState.Normal
     
+    /// Content offset of the tableview
+    private var contentOffset:CGFloat = 0
+    
+    //MARK: Various methods
 
-    var lastContentOffset:CGFloat = 0
-    
-    var multiGearView = MultiGearView(frame: CGRectZero)
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        multiGearView = MultiGearView(frame: CGRectMake(0, 0, frame.width, frame.height))
-        
-        addSubview(multiGearView)
-        clipsToBounds = true
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-        
-        
-    func setState(aState:MAGearRefreshState) {
+    /// Set the state of the refresh control.
+    ///
+    /// :param: aState New state of the refresh control.
+    private func setState(aState:MAGearRefreshState) {
         
         switch aState {
             
@@ -442,8 +479,8 @@ class MAGearRefreshControl: UIView {
             
             if state != .Normal {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
-                    for i in 1..<self.multiGearView.arrayViews.count {
-                        self.multiGearView.arrayViews[i].alpha = 1
+                    for i in 1..<self.arrayViews.count {
+                        self.arrayViews[i].alpha = 1
                         
                     } }, completion:nil)
             }
@@ -453,8 +490,8 @@ class MAGearRefreshControl: UIView {
         case .Loading:
             self.rotate()
             UIView.animateWithDuration(0.5, animations: { () -> Void in
-                for i in 1..<self.multiGearView.arrayViews.count {
-                    self.multiGearView.arrayViews[i].alpha = 0
+                for i in 1..<self.arrayViews.count {
+                    self.arrayViews[i].alpha = 0
                     
                 } }, completion:nil)
             break
@@ -464,8 +501,8 @@ class MAGearRefreshControl: UIView {
         state = aState
     }
     
-    
-    func rotate() {
+    /// Method called to rotate the main gear by 360 degree
+    private func rotate() {
         
         var rotate = true
         if let rot = delegate?.MAGearRefreshTableHeaderDataSourceIsLoading(self) {
@@ -474,14 +511,18 @@ class MAGearRefreshControl: UIView {
         
         if rotate {
             UIView.animateWithDuration(1, delay: 0, options: .CurveLinear, animations: { () -> Void in
-                self.multiGearView.arrayViews[0].transform = CGAffineTransformRotate(self.multiGearView.arrayViews[0].transform, CGFloat(M_PI))
+                self.arrayViews[0].transform = CGAffineTransformRotate(self.arrayViews[0].transform, CGFloat(M_PI))
                 }, completion: { (finished) -> Void in
                     self.rotate()
             })
         }
     }
     
-
+    //MARK: Public methods
+    
+    /// Method to call when the scrollview was scrolled.
+    ///
+    /// :param: scrollView The scrollview.
     func MAGearRefreshScrollViewDidScroll(scrollView:UIScrollView) {
         
         configureWithContentOffsetY(-scrollView.contentOffset.y)
@@ -518,6 +559,9 @@ class MAGearRefreshControl: UIView {
         }
     }
     
+    /// Method to call when the scrollview ended dragging
+    ///
+    /// :param: scrollView The scrollview.
     func MAGearRefreshScrollViewDidEndDragging(scrollView:UIScrollView) {
         var loading = false
         
@@ -527,29 +571,30 @@ class MAGearRefreshControl: UIView {
         
         if scrollView.contentOffset.y <= -65.0 && !loading {
             
-            
             delegate?.MAGearRefreshTableHeaderDidTriggerRefresh(self)
             
             setState(.Loading)
             
-            UIView.beginAnimations(nil, context: nil)
-            UIView.setAnimationDuration(0.2)
-            scrollView.contentInset = UIEdgeInsetsMake(60, 0, 0, 0)
-            UIView.commitAnimations()
+            var contentOffset = scrollView.contentOffset
             
+            UIView.animateWithDuration(0.2, animations: { () -> Void in
+                scrollView.contentInset = UIEdgeInsetsMake(60, 0, 0, 0)
+                scrollView.contentOffset = contentOffset;           // Workaround for smooth transition on iOS8
+            })
         }
     }
     
+    /// Method to call when the datasource finished loading
+    ///
+    /// :param: scrollView The scrollview.
     func MAGearRefreshScrollViewDataSourceDidFinishedLoading(scrollView:UIScrollView) {
-        
-        
-        
+
         UIView.animateWithDuration(0.1, animations: { () -> Void in
-            self.multiGearView.arrayViews[0].transform = CGAffineTransformMakeScale(1.2, 1.2)
+            self.arrayViews[0].transform = CGAffineTransformMakeScale(1.2, 1.2)
         }) { (finished) -> Void in
             
             UIView.animateWithDuration(0.3, animations: { () -> Void in
-                self.multiGearView.arrayViews[0].transform = CGAffineTransformMakeScale(0.1, 0.1)
+                self.arrayViews[0].transform = CGAffineTransformMakeScale(0.1, 0.1)
                 })
             
             UIView.animateWithDuration(0.3, delay: 0.1, options: .CurveLinear, animations: { () -> Void in
@@ -560,32 +605,50 @@ class MAGearRefreshControl: UIView {
         }
     }
     
-    
-    
-    
-    func addInitialGear(#nbTeeth:UInt, color: UIColor) {
-        self.multiGearView.addInitialGear(nbTeeth: nbTeeth, color: color)
-    }
-    
-    func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) {
-        self.multiGearView.addLinkedGear(gearLinked, nbTeeth: nbTeeth, color: color, angleInDegree: angleInDegree)
-    }
-    
-    func setMainGearPhase(phase:Double) {
-        self.multiGearView.setMainGearPhase(phase)
-    }
 
+    //MARK: View configuration
     
-    override var frame:CGRect  {
-        didSet {
-            configureWithContentOffsetY(lastContentOffset)
-        }
-    }
-    
-
-    func configureWithContentOffsetY(offset:CGFloat)
+    /// Method to configure the view with an Y offset of the scrollview
+    ///
+    /// :param: offset Offset of the scrollView
+    private func configureWithContentOffsetY(offset:CGFloat)
     {
-        multiGearView.frame = CGRectMake(0, frame.height - offset, frame.size.width, offset)
+        contentOffset = offset
+        configureView()
     }
     
+    /// Override of configureView(). The override is needed since we don't want the first gear to be centered within the view.
+    /// Instead, we want it to be centered within the visible part of the view
+    override private func configureView() {
+        if arrayViews.count == 0 {
+            return
+        }
+        
+        arrayViews[0].center.x = frame.size.width/2
+        arrayViews[0].center.y = frame.height  - contentOffset/2
+        
+        
+        for i in 1..<arrayViews.count {
+            
+            let angleBetweenGears = arrayAngles[i]
+            
+            let gearView = arrayViews[i]
+            let gear = gearView.gear
+            
+            
+            let linkedGearView      = arrayViews[arrayRelations[i]]
+            let linkedGear          = linkedGearView.gear
+            let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
+            let xValue = CGFloat(dist*cos(angleBetweenGears*M_PI/180))
+            let yValue = CGFloat(-dist*sin(angleBetweenGears*M_PI/180))
+            
+            gearView.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
+            
+            arrayViews[i].gear = gear
+            
+        }
+        
+        leftBorderView.frame    = CGRectMake(barMargin, frame.height - contentOffset, barWidth, contentOffset)
+        rightBorderView.frame   = CGRectMake(frame.size.width - barMargin - barWidth, frame.height - contentOffset, barWidth, contentOffset)
+    }
 }
