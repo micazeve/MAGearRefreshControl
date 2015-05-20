@@ -22,17 +22,17 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         self.navigationController?.navigationBar.translucent = false
         
         
-        refreshControlView = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.size.width, self.tableView.bounds.size.height))
+        refreshControlView = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
         refreshControlView.backgroundColor =  UIColor.initRGB(34, g: 75, b: 150)
         
-        self.refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236))
-        self.refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: 30)
-        self.refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190)
-        self.refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
-        self.refreshControlView.addLinkedGear(2, nbTeeth:24, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: -190)
-        self.refreshControlView.addLinkedGear(3, nbTeeth:10, color: UIColor.initRGB(92, g: 133, b: 236), angleInDegree: 40)
+        refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236))
+        refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: 30)
+        refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190)
+        refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
+        refreshControlView.addLinkedGear(2, nbTeeth:24, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: -190)
+        refreshControlView.addLinkedGear(3, nbTeeth:10, color: UIColor.initRGB(92, g: 133, b: 236), angleInDegree: 40)
         
-        self.refreshControlView.setMainGearPhase(0)
+        refreshControlView.setMainGearPhase(0)
         refreshControlView.delegate = self
         self.tableView.addSubview(refreshControlView)
         
@@ -70,7 +70,6 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
     //MARK: - UIScrollViewDelegate protocol conformance
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
-        NSLog("scrollViewDidScroll : \(scrollView.contentOffset.y)")
         refreshControlView.MAGearRefreshScrollViewDidScroll(scrollView)
     }
     

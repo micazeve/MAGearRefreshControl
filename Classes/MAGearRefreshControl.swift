@@ -35,10 +35,10 @@ import UIKit
 let multRadius:UInt = 80
 
 
-//MARK: - Gear Class
+//MARK: - MAGear Class
 
 /// This class represents a gear in the most abstract way, without any graphical code related.
-class Gear {
+class MAGear {
     
     //MARK: Instance properties
     
@@ -76,15 +76,15 @@ class Gear {
     }
 }
 
-//MARK: - SingleGearView Class
+//MARK: - MASingleGearView Class
 
 /// This class is used to draw a gear in a UIView.
-class SingleGearView : UIView {
+class MASingleGearView : UIView {
     
     //MARK: Instance properties
     
     /// Gear linked to this view.
-    private var gear:Gear!
+    private var gear:MAGear!
     
     /// Color of the gear.
     var gearColor = UIColor.blackColor()
@@ -100,7 +100,7 @@ class SingleGearView : UIView {
     ///
     /// :param: gear Gear linked to this view
     /// :param: gearColor Color of the gear
-    init(gear:Gear, gearColor:UIColor) {
+    init(gear:MAGear, gearColor:UIColor) {
         
         var width = Int(gear.outsideDiameter + 1)
         if width%2 == 1 {
@@ -182,10 +182,10 @@ class SingleGearView : UIView {
     
 }
 
-//MARK: - MultiGearView Class
+//MARK: - MAMultiGearView Class
 
 /// This class is used to draw multiples gears in a UIView.
-class MultiGearView : UIView {
+class MAMultiGearView : UIView {
     
     //MARK: Instance properties
     
@@ -213,7 +213,7 @@ class MultiGearView : UIView {
     private var diametralPitch:UInt = 24
     
     /// Array of views of gear
-    private var arrayViews:[SingleGearView] = []
+    private var arrayViews:[MASingleGearView] = []
     
     /// Relations between the gears.
     /// Ex.  arrayRelations[3] = 2   ->    the 3rd gear is linked to the 2nd one.
@@ -264,9 +264,9 @@ class MultiGearView : UIView {
             return false
         }
         
-        let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
+        let gear = MAGear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
         
-        let view = SingleGearView(gear: gear, gearColor:color)
+        let view = MASingleGearView(gear: gear, gearColor:color)
         view.phase = 0
         
         view.center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
@@ -293,7 +293,7 @@ class MultiGearView : UIView {
         let linkedGearView      = arrayViews[gearLinked]
         let linkedGear          = linkedGearView.gear
         
-        let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
+        let gear = MAGear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
         
         let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
         
@@ -318,7 +318,7 @@ class MultiGearView : UIView {
         var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
     
         
-        let view = SingleGearView(gear: gear, gearColor:color)
+        let view = MASingleGearView(gear: gear, gearColor:color)
         view.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
         
         arrayRelations.append(gearLinked)
@@ -441,9 +441,8 @@ class MultiGearView : UIView {
 
 //MARK: - MAGearRefreshControl Class
 
-/// This class is used to draw a group of gear and offers the same interactions as an UIRefreshControl
-
-class MAGearRefreshControl: MultiGearView {
+/// This class is used to draw an animated group of gears and offers the same interactions as an UIRefreshControl
+class MAGearRefreshControl: MAMultiGearView {
     
     //MARK: Instance properties
     
