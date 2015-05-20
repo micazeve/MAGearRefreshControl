@@ -172,25 +172,11 @@ class SingleGearView : UIView {
     
 }
 
+//MARK: - MultiGearView Class
 
-
-//MARK: - MAGearRefreshControl Class
-
-/// This class is used to draw a group of gear and offers the same interactions as an UIRefreshControl
-
-class MAGearRefreshControl: UIView {
+/// This class is used to draw multiples gears in a UIView.
+class MultiGearView : UIView {
     
-    
-    enum MAGearRefreshState: UInt8 {
-        case Pulling
-        case Normal
-        case Loading
-    }
-    
-    var delegate:MAGearRefreshDelegate?
-    var state = MAGearRefreshState.Normal
-    
-
     let barreWidth:CGFloat = 20
     var diametralPitch:UInt = 24
     
@@ -205,11 +191,9 @@ class MAGearRefreshControl: UIView {
     /// Ex.  arrayAngles[3] ->   the angle between the 3rd gear and its linked one
     var arrayAngles:[Double] = [0]
     
-    var lastContentOffset:CGFloat = 0
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+    
         clipsToBounds = true
         
         let view1 = UIView(frame:CGRectMake(10, 0, barreWidth, frame.height))
@@ -229,6 +213,222 @@ class MAGearRefreshControl: UIView {
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
+    
+    
+    func addInitialGear(#nbTeeth:UInt, color: UIColor) {
+        
+        if arrayViews.count > 0  {
+            return
+        }
+        
+        let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
+        
+        let view = SingleGearView(gear: gear, gearColor:color)
+        view.phase = 0
+        
+        addSubview(view)
+        
+        view.center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
+        
+        arrayViews.append(view)
+        
+        for border in arrayBorders {
+            self.bringSubviewToFront(border)
+        }
+        
+    }
+    
+    func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) {
+        
+        
+        if gearLinked >= arrayViews.count {
+            return
+        }
+        
+        let linkedGearView      = arrayViews[gearLinked]
+        let linkedGear          = linkedGearView.gear
+        
+        let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
+        
+        let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
+        
+        let xValue = CGFloat(dist*cos(angleInDegree*M_PI/180))
+        let yValue = CGFloat(-dist*sin(angleInDegree*M_PI/180))
+        
+        
+        var angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
+        
+        var nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
+        var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
+        
+        
+        var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
+        
+        if phaseNewGearForAngle >= 1 {
+            phaseNewGearForAngle -= 1
+        }
+        
+        
+        
+        var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
+        
+        var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
+        var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
+        
+        
+        
+        let view = SingleGearView(gear: gear, gearColor:color)
+        addSubview(view)
+        view.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
+        
+        arrayRelations.append(gearLinked)
+        arrayAngles.append(angleInDegree)
+        view.phase = phaseNewGearForAngle - phaseForNewAngle
+        
+        
+        arrayViews.append(view)
+        for border in arrayBorders {
+            self.bringSubviewToFront(border)
+        }
+        
+    }
+    
+    func setMainGearPhase(phase:Double) {
+        if arrayViews.count == 0  {
+            return
+        }
+        
+        var newPhase = phase
+        if newPhase >= 1 {
+            newPhase = 0
+        } else if newPhase < 0 {
+            newPhase = 0
+        }
+        
+        arrayViews[0].phase = newPhase
+        
+        for i in 1..<arrayViews.count {
+            
+            let gearView = arrayViews[i]
+            
+            
+            let gear                = gearView.gear
+            let linkedGearView      = arrayViews[arrayRelations[i]]
+            let linkedGear          = linkedGearView.gear
+            
+            
+            let angleInDegree = arrayAngles[i]
+            
+            let angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
+            
+            let nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
+            var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
+            
+            
+            var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
+            
+            if phaseNewGearForAngle >= 1 {
+                phaseNewGearForAngle -= 1
+            }
+            var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
+            
+            var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
+            var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
+            
+            
+            let finalPhase = phaseNewGearForAngle - phaseForNewAngle
+            
+            arrayViews[i].phase  = finalPhase
+            
+            
+        }
+        for view in arrayViews {
+            
+            let angleInRad = -view.phase * 2 * M_PI / Double(view.gear.nbTeeth)
+            view.transform = CGAffineTransformMakeRotation(CGFloat(angleInRad))
+            
+        }
+    }
+    
+    override var frame:CGRect  {
+        didSet {
+            configureView()
+        }
+    }
+    
+    
+    func configureView()
+    {
+        if arrayViews.count == 0 {
+            return
+        }
+        
+        arrayViews[0].center.x = frame.size.width/2
+        arrayViews[0].center.y = frame.height/2
+        
+        
+        for i in 1..<arrayViews.count {
+            
+            let angleBetweenGears = arrayAngles[i]
+            
+            let gearView = arrayViews[i]
+            let gear = gearView.gear
+            
+            
+            let linkedGearView      = arrayViews[arrayRelations[i]]
+            let linkedGear          = linkedGearView.gear
+            let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
+            let xValue = CGFloat(dist*cos(angleBetweenGears*M_PI/180))
+            let yValue = CGFloat(-dist*sin(angleBetweenGears*M_PI/180))
+            
+            gearView.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
+            
+            arrayViews[i].gear = gear
+            
+        }
+        
+        arrayBorders[0].frame = CGRectMake(10,  0, barreWidth, frame.height)
+        arrayBorders[1].frame = CGRectMake(frame.size.width - 10 - barreWidth, 0, barreWidth, frame.height)
+        
+    }
+
+}
+
+//MARK: - MAGearRefreshControl Class
+
+/// This class is used to draw a group of gear and offers the same interactions as an UIRefreshControl
+
+class MAGearRefreshControl: UIView {
+    
+    
+    enum MAGearRefreshState: UInt8 {
+        case Pulling
+        case Normal
+        case Loading
+    }
+    
+    var delegate:MAGearRefreshDelegate?
+    var state = MAGearRefreshState.Normal
+    
+
+    var lastContentOffset:CGFloat = 0
+    
+    var multiGearView = MultiGearView(frame: CGRectZero)
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        multiGearView = MultiGearView(frame: CGRectMake(0, 0, frame.width, frame.height))
+        
+        addSubview(multiGearView)
+        clipsToBounds = true
+    }
+    
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
         
         
     func setState(aState:MAGearRefreshState) {
@@ -242,8 +442,8 @@ class MAGearRefreshControl: UIView {
             
             if state != .Normal {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
-                    for i in 1..<self.arrayViews.count {
-                        self.arrayViews[i].alpha = 1
+                    for i in 1..<self.multiGearView.arrayViews.count {
+                        self.multiGearView.arrayViews[i].alpha = 1
                         
                     } }, completion:nil)
             }
@@ -253,8 +453,8 @@ class MAGearRefreshControl: UIView {
         case .Loading:
             self.rotate()
             UIView.animateWithDuration(0.5, animations: { () -> Void in
-                for i in 1..<self.arrayViews.count {
-                    self.arrayViews[i].alpha = 0
+                for i in 1..<self.multiGearView.arrayViews.count {
+                    self.multiGearView.arrayViews[i].alpha = 0
                     
                 } }, completion:nil)
             break
@@ -274,7 +474,7 @@ class MAGearRefreshControl: UIView {
         
         if rotate {
             UIView.animateWithDuration(1, delay: 0, options: .CurveLinear, animations: { () -> Void in
-                self.arrayViews[0].transform = CGAffineTransformRotate(self.arrayViews[0].transform, CGFloat(M_PI))
+                self.multiGearView.arrayViews[0].transform = CGAffineTransformRotate(self.multiGearView.arrayViews[0].transform, CGFloat(M_PI))
                 }, completion: { (finished) -> Void in
                     self.rotate()
             })
@@ -345,11 +545,11 @@ class MAGearRefreshControl: UIView {
         
         
         UIView.animateWithDuration(0.1, animations: { () -> Void in
-            self.arrayViews[0].transform = CGAffineTransformMakeScale(1.2, 1.2)
+            self.multiGearView.arrayViews[0].transform = CGAffineTransformMakeScale(1.2, 1.2)
         }) { (finished) -> Void in
             
             UIView.animateWithDuration(0.3, animations: { () -> Void in
-                self.arrayViews[0].transform = CGAffineTransformMakeScale(0.1, 0.1)
+                self.multiGearView.arrayViews[0].transform = CGAffineTransformMakeScale(0.1, 0.1)
                 })
             
             UIView.animateWithDuration(0.3, delay: 0.1, options: .CurveLinear, animations: { () -> Void in
@@ -361,145 +561,23 @@ class MAGearRefreshControl: UIView {
     }
     
     
+    
+    
     func addInitialGear(#nbTeeth:UInt, color: UIColor) {
-        
-        if arrayViews.count > 0  {
-            return
-        }
-        
-        let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
-
-        let view = SingleGearView(gear: gear, gearColor:color)
-        view.phase = 0
-        
-        addSubview(view)
-        
-        view.center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
-        
-        arrayViews.append(view)
-        
-        for border in arrayBorders {
-            self.bringSubviewToFront(border)
-        }
-        
+        self.multiGearView.addInitialGear(nbTeeth: nbTeeth, color: color)
     }
     
     func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) {
-        
-        
-        if gearLinked >= arrayViews.count {
-            return
-        }
-        
-        let linkedGearView      = arrayViews[gearLinked]
-        let linkedGear          = linkedGearView.gear
-        
-        let gear = Gear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
-        
-        let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
-        
-        let xValue = CGFloat(dist*cos(angleInDegree*M_PI/180))
-        let yValue = CGFloat(-dist*sin(angleInDegree*M_PI/180))
-
-        
-        var angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
-        
-        var nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
-        var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
-        
-        
-        var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
-        
-        if phaseNewGearForAngle >= 1 {
-            phaseNewGearForAngle -= 1
-        }
-        
-        
-        
-        var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
-        
-        var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
-        var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
-        
-        
-        
-        let view = SingleGearView(gear: gear, gearColor:color)
-        addSubview(view)
-        view.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
-        
-        arrayRelations.append(gearLinked)
-        arrayAngles.append(angleInDegree)
-        view.phase = phaseNewGearForAngle - phaseForNewAngle
-        
-        
-        arrayViews.append(view)
-        for border in arrayBorders {
-            self.bringSubviewToFront(border)
-        }
-        
+        self.multiGearView.addLinkedGear(gearLinked, nbTeeth: nbTeeth, color: color, angleInDegree: angleInDegree)
     }
     
     func setMainGearPhase(phase:Double) {
-        if arrayViews.count == 0  {
-            return
-        }
-        
-        var newPhase = phase
-        if newPhase >= 1 {
-            newPhase = 0
-        } else if newPhase < 0 {
-            newPhase = 0
-        }
-        
-        arrayViews[0].phase = newPhase
-        
-        for i in 1..<arrayViews.count {
-            
-            let gearView = arrayViews[i]
-            
-       
-            let gear                = gearView.gear
-            let linkedGearView      = arrayViews[arrayRelations[i]]
-            let linkedGear          = linkedGearView.gear
-            
-            
-            let angleInDegree = arrayAngles[i]
-            
-            let angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
-            
-            let nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
-            var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
-            
-            
-            var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
-            
-            if phaseNewGearForAngle >= 1 {
-                phaseNewGearForAngle -= 1
-            }
-            var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
-            
-            var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
-            var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
-            
-            
-            let finalPhase = phaseNewGearForAngle - phaseForNewAngle
-            
-            arrayViews[i].phase  = finalPhase
-         
-            
-        }
-        for view in arrayViews {
-            
-            let angleInRad = -view.phase * 2 * M_PI / Double(view.gear.nbTeeth)
-            view.transform = CGAffineTransformMakeRotation(CGFloat(angleInRad))
-      
-        }
+        self.multiGearView.setMainGearPhase(phase)
     }
+
     
     override var frame:CGRect  {
         didSet {
-            // You can use 'oldValue' to see what it used to be,
-            // and 'highlighted' will be what it was set to.
             configureWithContentOffsetY(lastContentOffset)
         }
     }
@@ -507,37 +585,7 @@ class MAGearRefreshControl: UIView {
 
     func configureWithContentOffsetY(offset:CGFloat)
     {
-        if arrayViews.count == 0 {
-            return
-        }
-        
-        lastContentOffset = offset
-        arrayViews[0].center.x = frame.size.width/2
-        arrayViews[0].center.y = frame.height - offset/2
-        
-        for i in 1..<arrayViews.count {
-            
-            let angleBetweenGears = arrayAngles[i]
-            
-            let gearView = arrayViews[i]
-            let gear = gearView.gear
-            
-            
-            let linkedGearView      = arrayViews[arrayRelations[i]]
-            let linkedGear          = linkedGearView.gear
-            let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
-            let xValue = CGFloat(dist*cos(angleBetweenGears*M_PI/180))
-            let yValue = CGFloat(-dist*sin(angleBetweenGears*M_PI/180))
-            
-            gearView.center = CGPointMake(linkedGearView.center.x + xValue, linkedGearView.center.y + yValue)
-            
-            arrayViews[i].gear = gear
-            
-        }
-        
-        arrayBorders[0].frame = CGRectMake(10, frame.height - offset, barreWidth, offset)
-        arrayBorders[1].frame = CGRectMake(frame.size.width - 10 - barreWidth, frame.height - offset, barreWidth, offset)
-        
+        multiGearView.frame = CGRectMake(0, frame.height - offset, frame.size.width, offset)
     }
     
 }
