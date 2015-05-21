@@ -201,6 +201,14 @@ class MAMultiGearView : UIView {
     /// Width of the bars
     var barWidth:CGFloat    = 20
     
+    /// Color of the side bars
+    var barColor = UIColor.whiteColor() {
+        didSet {
+            leftBorderView.backgroundColor   = barColor
+            rightBorderView.backgroundColor  = barColor
+        }
+    }
+    
     /// Boolean used to display or hide the side bars.
     var showBars = true {
         didSet {
@@ -233,11 +241,10 @@ class MAMultiGearView : UIView {
         clipsToBounds = true
         
         leftBorderView = UIView(frame:CGRectMake(barMargin, 0, barWidth, frame.height))
-        leftBorderView.backgroundColor = UIColor.initRGB(92, g: 133, b: 236)
-        
+        leftBorderView.backgroundColor = barColor
         
         rightBorderView = UIView(frame:CGRectMake(frame.width - barMargin - barWidth, 0, barWidth, frame.height))
-        rightBorderView.backgroundColor = UIColor.initRGB(92, g: 133, b: 236)
+        rightBorderView.backgroundColor = barColor
         
         
         addSubview(leftBorderView)

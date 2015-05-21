@@ -31,9 +31,9 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
         refreshControlView.addLinkedGear(2, nbTeeth:24, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: -190)
         refreshControlView.addLinkedGear(3, nbTeeth:10, color: UIColor.initRGB(92, g: 133, b: 236), angleInDegree: 40)
-        
         refreshControlView.setMainGearPhase(0)
         refreshControlView.delegate = self
+        refreshControlView.barColor = UIColor.initRGB(92, g: 133, b: 236)
         self.tableView.addSubview(refreshControlView)
         
     }
