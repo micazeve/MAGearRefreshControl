@@ -463,11 +463,23 @@ class MAGearRefreshControl: MAMultiGearView {
     /// State of the refresh control
     private var state = MAGearRefreshState.Normal
     
+    /// Enum representing the animation style
+    enum MAGearRefreshAnimationStyle: UInt8 {
+        case SingleGear    // Only the main gear is rotating when the data is refreshing
+        case KeepGears     // All the gear are still visible during the refresh and disappear only when its finished
+    }
+    
+    /// Animation style of the refresh control
+    private var style = MAGearRefreshAnimationStyle.KeepGears
+    
     /// Delegate conforming to the MAGearRefreshDelegate protocol. Most of time it's an UITableViewController
     var delegate:MAGearRefreshDelegate?
     
     /// Content offset of the tableview
     private var contentOffset:CGFloat = 0
+    
+    /// Array of rotational angle for the refresh
+    private var arrayOfRotationAngle:[CGFloat] = [180]
     
     //MARK: Various methods
 
@@ -485,8 +497,10 @@ class MAGearRefreshControl: MAMultiGearView {
             
             if state != .Normal {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
-                    for i in 1..<self.arrayViews.count {
-                        self.arrayViews[i].alpha = 1
+                    
+                    for view in self.arrayViews {
+                        view.alpha = 1
+                        view.transform = CGAffineTransformIdentity
                         
                     } }, completion:nil)
             }
@@ -495,11 +509,15 @@ class MAGearRefreshControl: MAMultiGearView {
             
         case .Loading:
             self.rotate()
-            UIView.animateWithDuration(0.5, animations: { () -> Void in
-                for i in 1..<self.arrayViews.count {
-                    self.arrayViews[i].alpha = 0
-                    
-                } }, completion:nil)
+            if style == .SingleGear {
+                
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    for i in 1..<self.arrayViews.count {
+                        self.arrayViews[i].alpha = 0
+                        
+                    } }, completion:nil)
+            }
+            
             break
         default:
             break
@@ -517,12 +535,41 @@ class MAGearRefreshControl: MAMultiGearView {
         
         if rotate {
             UIView.animateWithDuration(1, delay: 0, options: .CurveLinear, animations: { () -> Void in
-                self.arrayViews[0].transform = CGAffineTransformRotate(self.arrayViews[0].transform, CGFloat(M_PI))
+                
+                switch self.style {
+                case .SingleGear:
+                    self.arrayViews[0].transform = CGAffineTransformRotate(self.arrayViews[0].transform, self.arrayOfRotationAngle[0] / 180 * CGFloat(M_PI))
+                case .KeepGears:
+                    for i in 0..<self.arrayViews.count {
+                        let view = self.arrayViews[i]
+                        view.transform = CGAffineTransformRotate(view.transform, self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI))
+                    }
+                default:
+                    break
+                }
+                
+                
                 }, completion: { (finished) -> Void in
                     self.rotate()
             })
         }
     }
+    
+    /// Override of the `addLinkedGear` method in order to update the array of rotational angle when a gear is added
+    override func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
+    
+        let ret = super.addLinkedGear(gearLinked, nbTeeth: nbTeeth, color: color, angleInDegree: angleInDegree)
+        if !ret {
+            return false
+        }
+        
+        let ratio = CGFloat(arrayViews[gearLinked].gear.nbTeeth) / CGFloat(arrayViews[arrayViews.count - 1].gear.nbTeeth)
+        let newAngle = -1 * arrayOfRotationAngle[gearLinked] * ratio
+        
+        arrayOfRotationAngle.append(newAngle)
+        return true
+    }
+
     
     //MARK: Public methods
     
@@ -600,12 +647,21 @@ class MAGearRefreshControl: MAMultiGearView {
         }) { (finished) -> Void in
             
             UIView.animateWithDuration(0.3, animations: { () -> Void in
+                
+                if self.style == .KeepGears {
+                    for i in 1..<self.arrayViews.count {
+                        self.arrayViews[i].alpha = 0
+                    }
+                }
+                
+                
                 self.arrayViews[0].transform = CGAffineTransformMakeScale(0.1, 0.1)
                 })
             
             UIView.animateWithDuration(0.3, delay: 0.1, options: .CurveLinear, animations: { () -> Void in
                 scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
             }, completion: { (finished) -> Void in
+                
                 self.setState(.Normal)
             })
         }
