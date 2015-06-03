@@ -86,8 +86,8 @@
 				83D9CA4B1B0CC50A00ECA1F5 /* DemoTableViewController.swift */,
 				83D9CA251B0CC44D00ECA1F5 /* AppDelegate.swift */,
 				83D9CA291B0CC44D00ECA1F5 /* Main.storyboard */,
-				83D9CA2C1B0CC44D00ECA1F5 /* Images.xcassets */,
 				83D9CA2E1B0CC44D00ECA1F5 /* LaunchScreen.xib */,
+				83D9CA2C1B0CC44D00ECA1F5 /* Images.xcassets */,
 				83D9CA231B0CC44D00ECA1F5 /* Supporting Files */,
 			);
 			path = "MAGearRefreshControl-Demo";

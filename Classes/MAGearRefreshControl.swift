@@ -498,23 +498,6 @@ class MAGearRefreshControl: MAMultiGearView {
         NSLog("setState : \(aState.rawValue)")
         switch aState {
             
-        case .Pulling:
-            break
-            
-        case .Normal:
-            
-            if state != .Normal {
-                UIView.animateWithDuration(0.5, animations: { () -> Void in
-                    
-                    for view in self.arrayViews {
-                        view.alpha = 1
-                        view.transform = CGAffineTransformIdentity
-                        
-                    } }, completion:nil)
-            }
-            
-            break
-            
         case .Loading:
             self.rotate()
             if style == .SingleGear {
@@ -694,6 +677,11 @@ class MAGearRefreshControl: MAMultiGearView {
                     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
                     }, completion: { (finished) -> Void in
                         self.setState(.Normal)
+                        for view in self.arrayViews {
+                            view.alpha = 1
+                            view.transform = CGAffineTransformIdentity
+                            
+                        }
                 })
         }
     }
