@@ -30,11 +30,6 @@ import UIKit
 }
 
 
-
-/// Multiplicator factor in order to draw the gear correctly. Was set arbitrarily and can be changed.
-let multRadius:UInt = 80
-
-
 //MARK: - MAGear Class
 
 /// This class represents a gear in the most abstract way, without any graphical code related.
@@ -52,7 +47,7 @@ class MAGear {
     let insideDiameter:CGFloat
     
     /// The number of teeth per inch of the circumference of the pitch diameter. The diametral pitch of all meshing gears must be the same.
-    let diametralPitch:UInt
+    let diametralPitch:CGFloat
     
     /// Number of teeth of the gear.
     let nbTeeth:UInt
@@ -62,16 +57,16 @@ class MAGear {
     
     /// Init method.
     ///
-    /// :param: diametralPitch Diametral pitch of the group of gears
+    /// :param: radius of the gear
     /// :param: nbTeeth Number of teeth of the gear. Must be greater than 2.
-    init (diametralPitch:UInt, nbTeeth:UInt) {
+    init (radius:CGFloat, nbTeeth:UInt) {
         
         assert(nbTeeth > 2)
         
-        self.diametralPitch = diametralPitch
-        self.pitchDiameter = CGFloat(multRadius*nbTeeth)/CGFloat(diametralPitch)
-        self.outsideDiameter = CGFloat(multRadius*(nbTeeth+2))/CGFloat(diametralPitch)
-        self.insideDiameter = CGFloat(multRadius*(nbTeeth-2))/CGFloat(diametralPitch)
+        self.pitchDiameter = 2*radius
+        self.diametralPitch = CGFloat(nbTeeth)/pitchDiameter
+        self.outsideDiameter = CGFloat((nbTeeth+2))/diametralPitch
+        self.insideDiameter = CGFloat((nbTeeth-2))/diametralPitch
         self.nbTeeth = nbTeeth
     }
 }
@@ -218,7 +213,7 @@ class MAMultiGearView : UIView {
     }
     
     /// Diametral pitch of the group of gear
-    private var diametralPitch:UInt = 24
+    private var diametralPitch:CGFloat!
     
     /// Array of views of gear
     private var arrayViews:[MASingleGearView] = []
@@ -263,15 +258,18 @@ class MAMultiGearView : UIView {
     ///
     /// :param: nbTeeth Number of teeth of the gear.
     /// :param: color Color of the gear.
+    /// :param: radius Radius in pixel of the gear
     ///
     /// :returns: true if the gear was succesfully created, false otherwise (if at least one gear exists).
-    func addInitialGear(#nbTeeth:UInt, color: UIColor) -> Bool {
+    func addInitialGear(#nbTeeth:UInt, color: UIColor, radius:CGFloat) -> Bool {
         
         if arrayViews.count > 0  {
             return false
         }
         
-        let gear = MAGear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
+        diametralPitch = CGFloat(nbTeeth)/(2*radius)
+        
+        let gear = MAGear(radius: radius, nbTeeth: nbTeeth)
         
         let view = MASingleGearView(gear: gear, gearColor:color)
         view.phase = 0
@@ -300,7 +298,9 @@ class MAMultiGearView : UIView {
         let linkedGearView      = arrayViews[gearLinked]
         let linkedGear          = linkedGearView.gear
         
-        let gear = MAGear(diametralPitch: diametralPitch, nbTeeth: nbTeeth)
+        let newRadius = CGFloat(nbTeeth)/(2*diametralPitch)
+        
+        let gear = MAGear(radius:newRadius, nbTeeth: nbTeeth)
         
         let dist = Double(gear.pitchDiameter + linkedGear.pitchDiameter)/2
         

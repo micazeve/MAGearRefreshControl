@@ -25,7 +25,7 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         refreshControlView = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
         refreshControlView.backgroundColor =  UIColor.initRGB(34, g: 75, b: 150)
         
-        refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236))
+        refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
         refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: 30)
         refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190)
         refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
