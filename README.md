@@ -1,8 +1,12 @@
 # README
-MAGearRefreshControl is an iOS refresh control with gear animation for tableview refresh, writen in Swift.
+MAGearRefreshControl is a fully customizable iOS refresh control with gear animation for tableview refresh, writen in Swift.
 
 ![MAGearRefreshControl](Screenshots/Anim.gif "MAGearRefreshControl")
 
+##**Credits:**
+
+This project is inspired by this [dribble post](https://dribbble.com/shots/1974767-gear-powered-pull-to-refresh-animation).
+The main structure of the refresh Control is based on [EGOTableViewPullRefresh](https://github.com/enormego/EGOTableViewPullRefresh).
 
 ##**How to use:**
 
@@ -21,7 +25,7 @@ MAGearRefreshControl is made of four base classes you can use as you wish :
 
     refreshControl = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
     refreshControl.backgroundColor =  UIColor.initRGB(34, g: 75, b: 150)
-    refreshControl.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236))
+    refreshControl.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
     refreshControl.delegate = self
     self.tableView.addSubview(refreshControl)
 
@@ -51,12 +55,8 @@ The refresh control must be notified of scrolling events and when the data is lo
 
 MAGearRefreshControl is under MIT Licence so you can use/modify it as you wish. Any feedback will be appreciated.
 
-##**Credits:**
 
-This project is fully inspired by this [dribble post](https://dribbble.com/shots/1974767-gear-powered-pull-to-refresh-animation).
+##**Contact:**
 
-The main structure of the refresh Control is based on [EGOTableViewPullRefresh](https://github.com/enormego/EGOTableViewPullRefresh).
-
-Any comments are welcomed
-
-@micazeve micazeve@gmail.com
+[@micazeve](https://twitter.com/micazeve)  
+micazeve@gmail.com
