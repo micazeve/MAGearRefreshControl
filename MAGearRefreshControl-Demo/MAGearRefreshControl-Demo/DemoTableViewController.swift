@@ -25,12 +25,13 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         refreshControlView = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
         refreshControlView.backgroundColor =  UIColor.initRGB(34, g: 75, b: 150)
         
-        refreshControlView.addInitialGear(nbTeeth:12, color: UIColor(white: 0.85, alpha: 1), radius:15)
-        refreshControlView.addLinkedGear(0, nbTeeth:20, color: UIColor(white: 0.955, alpha: 1), angleInDegree: 30)
-        refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor(white: 0.965, alpha: 1), angleInDegree: -30)
-        refreshControlView.addLinkedGear(2, nbTeeth:10, color: UIColor(white: 0.94, alpha: 1), angleInDegree: 40)
+        refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
+        refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: 30)
+        refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190)
+        refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
+        refreshControlView.addLinkedGear(2, nbTeeth:24, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: -190)
+        refreshControlView.addLinkedGear(3, nbTeeth:10, color: UIColor.initRGB(92, g: 133, b: 236), angleInDegree: 40)
         refreshControlView.setMainGearPhase(0)
-        refreshControlView.barColor = UIColor.initRGB(198, g: 198, b: 205).colorWithAlphaComponent(0.5)
         refreshControlView.delegate = self
         refreshControlView.barColor = UIColor.initRGB(92, g: 133, b: 236)
         self.tableView.addSubview(refreshControlView)
