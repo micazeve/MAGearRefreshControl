@@ -488,6 +488,12 @@ class MAGearRefreshControl: MAMultiGearView {
     /// Variable used to know if the end of the refresh has been asked
     private var endRefreshAsked = false
     
+    /// Variable used to rotate or no the gear
+    var stopRotating = true
+    
+    /// Workaround for the issue with the CGAffineTransformRotate (when angle > M_PI its rotate clockwise beacause it's shorter)
+    var divisionFactor: CGFloat = 1
+    
     
     //MARK: Various methods
     
@@ -524,8 +530,11 @@ class MAGearRefreshControl: MAMultiGearView {
             rotate = rot
         }
         
-        if rotate {
-            UIView.animateWithDuration(1, delay: 0, options: .CurveLinear, animations: { () -> Void in
+        if !stopRotating {
+            
+            let duration = NSTimeInterval(1/divisionFactor)
+        
+            UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
                 
                 switch self.style {
                 case .SingleGear:
@@ -533,7 +542,7 @@ class MAGearRefreshControl: MAMultiGearView {
                 case .KeepGears:
                     for i in 0..<self.arrayViews.count {
                         let view = self.arrayViews[i]
-                        view.transform = CGAffineTransformRotate(view.transform, self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI))
+                        view.transform = CGAffineTransformRotate(view.transform, self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI) / self.divisionFactor)
                     }
                 default:
                     break
@@ -559,7 +568,20 @@ class MAGearRefreshControl: MAMultiGearView {
         let ratio = CGFloat(arrayViews[gearLinked].gear.nbTeeth) / CGFloat(arrayViews[arrayViews.count - 1].gear.nbTeeth)
         let newAngle = -1 * arrayOfRotationAngle[gearLinked] * ratio
         
+        NSLog("addLinkedGear \(gearLinked) , \(nbTeeth) , \(angleInDegree)")
+        
+        NSLog("     angleOtherGear : \(arrayOfRotationAngle[gearLinked])")
+        NSLog("     ratio : \(ratio)")
+        NSLog("     newAngle : \(newAngle)")
+        
         arrayOfRotationAngle.append(newAngle)
+        
+        var angleScaled = 1+floor(abs(newAngle)/180)
+        
+        if angleScaled > divisionFactor {
+            divisionFactor = angleScaled
+        }
+        
         return true
     }
     
@@ -571,7 +593,6 @@ class MAGearRefreshControl: MAMultiGearView {
     /// :param: scrollView The scrollview.
     func MAGearRefreshScrollViewDidScroll(scrollView:UIScrollView) {
         
-        NSLog("MAGearRefreshScrollViewDidScroll : \(scrollView.contentOffset.y)")
         configureWithContentOffsetY(-scrollView.contentOffset.y)
         
         if (state == .Loading) {
@@ -618,6 +639,7 @@ class MAGearRefreshControl: MAMultiGearView {
         
         if scrollView.contentOffset.y <= -65.0 && !loading {
             
+            self.stopRotating = false
             delegate?.MAGearRefreshTableHeaderDidTriggerRefresh(self)
             
             setState(.Loading)
@@ -677,6 +699,7 @@ class MAGearRefreshControl: MAMultiGearView {
                     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
                     }, completion: { (finished) -> Void in
                         self.setState(.Normal)
+                        self.stopRotating = true
                         for view in self.arrayViews {
                             view.alpha = 1
                             view.transform = CGAffineTransformIdentity
