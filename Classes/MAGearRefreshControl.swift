@@ -446,22 +446,15 @@ class MAMultiGearView : UIView {
     
 }
 
-//MARK: - MAGearRefreshControl Class
 
-/// This class is used to draw an animated group of gears and offers the same interactions as an UIRefreshControl
-class MAGearRefreshControl: MAMultiGearView {
+//MARK: - MAAnimatedMultiGearView Class
+
+/// This class is used to draw and animate multiple gears
+
+class MAAnimatedMultiGearView: MAMultiGearView {
     
     //MARK: Instance properties
     
-    /// Enum representing the different state of the refresh control
-    enum MAGearRefreshState: UInt8 {
-        case Normal         // The user is pulling but hasn't reach the activation threshold yet
-        case Pulling        // The user is still pulling and has passed the activation threshold
-        case Loading        // The refresh control is animating
-    }
-    
-    /// State of the refresh control
-    private var state = MAGearRefreshState.Normal
     
     /// Enum representing the animation style
     enum MAGearRefreshAnimationStyle: UInt8 {
@@ -472,90 +465,16 @@ class MAGearRefreshControl: MAMultiGearView {
     /// Animation style of the refresh control
     private var style = MAGearRefreshAnimationStyle.KeepGears
     
-    /// Delegate conforming to the MAGearRefreshDelegate protocol. Most of time it's an UITableViewController
-    var delegate:MAGearRefreshDelegate?
-    
-    /// Content offset of the tableview
-    private var contentOffset:CGFloat = 0
-    
     /// Array of rotational angle for the refresh
     private var arrayOfRotationAngle:[CGFloat] = [180]
     
-    /// Variable used to allow the end of the refresh
-    /// We must wait for the end of the animation of the contentInset before allowing the refresh
-    private var endRefreshAllowed = false
-    
-    /// Variable used to know if the end of the refresh has been asked
-    private var endRefreshAsked = false
+    /// Workaround for the issue with the CGAffineTransformRotate (when angle > M_PI its rotate clockwise beacause it's shorter)
+    private var divisionFactor: CGFloat = 1
     
     /// Variable used to rotate or no the gear
-    var stopRotating = true
-    
-    /// Workaround for the issue with the CGAffineTransformRotate (when angle > M_PI its rotate clockwise beacause it's shorter)
-    var divisionFactor: CGFloat = 1
-    
+    var stopRotation = true
     
     //MARK: Various methods
-    
-    /// Set the state of the refresh control.
-    ///
-    /// :param: aState New state of the refresh control.
-    private func setState(aState:MAGearRefreshState) {
-        NSLog("setState : \(aState.rawValue)")
-        switch aState {
-            
-        case .Loading:
-            self.rotate()
-            if style == .SingleGear {
-                
-                UIView.animateWithDuration(0.5, animations: { () -> Void in
-                    for i in 1..<self.arrayViews.count {
-                        self.arrayViews[i].alpha = 0
-                        
-                    } }, completion:nil)
-            }
-            
-            break
-        default:
-            break
-        }
-        state = aState
-    }
-    
-    /// Method called to rotate the main gear by 360 degree
-    private func rotate() {
-        
-        var rotate = true
-        if let rot = delegate?.MAGearRefreshTableHeaderDataSourceIsLoading(self) {
-            rotate = rot
-        }
-        
-        if !stopRotating {
-            
-            let duration = NSTimeInterval(1/divisionFactor)
-        
-            UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
-                
-                switch self.style {
-                case .SingleGear:
-                    self.arrayViews[0].transform = CGAffineTransformRotate(self.arrayViews[0].transform, self.arrayOfRotationAngle[0] / 180 * CGFloat(M_PI))
-                case .KeepGears:
-                    for i in 0..<self.arrayViews.count {
-                        let view = self.arrayViews[i]
-                        view.transform = CGAffineTransformRotate(view.transform, self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI) / self.divisionFactor)
-                    }
-                default:
-                    break
-                }
-                
-                
-                }, completion: { (finished) -> Void in
-                    self.rotate()
-            })
-        }
-    }
-    
-    
     
     /// Override of the `addLinkedGear` method in order to update the array of rotational angle when a gear is added
     override func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
@@ -583,6 +502,110 @@ class MAGearRefreshControl: MAMultiGearView {
         }
         
         return true
+    }
+    
+    
+    /// Method called to rotate the main gear by 360 degree
+    private func rotate() {
+        
+        if !stopRotation {
+            
+            let duration = NSTimeInterval(1/divisionFactor)
+            
+            UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
+                
+                switch self.style {
+                case .SingleGear:
+                    self.arrayViews[0].transform = CGAffineTransformRotate(self.arrayViews[0].transform, self.arrayOfRotationAngle[0] / 180 * CGFloat(M_PI))
+                case .KeepGears:
+                    for i in 0..<self.arrayViews.count {
+                        let view = self.arrayViews[i]
+                        view.transform = CGAffineTransformRotate(view.transform, self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI) / self.divisionFactor)
+                    }
+                default:
+                    break
+                }
+                
+                
+                }, completion: { (finished) -> Void in
+                    self.rotate()
+            })
+        }
+    }
+    
+    /// Public method to start rotating
+    func startRotating() {
+        stopRotation = false
+        rotate()
+    }
+    
+    
+    /// Public method to start rotating
+    func stopRotating() {
+        stopRotation = true
+    }
+}
+
+
+
+//MARK: - MAGearRefreshControl Class
+
+/// This class is used to draw an animated group of gears and offers the same interactions as an UIRefreshControl
+class MAGearRefreshControl: MAAnimatedMultiGearView {
+    
+    //MARK: Instance properties
+    
+    /// Enum representing the different state of the refresh control
+    enum MAGearRefreshState: UInt8 {
+        case Normal         // The user is pulling but hasn't reach the activation threshold yet
+        case Pulling        // The user is still pulling and has passed the activation threshold
+        case Loading        // The refresh control is animating
+    }
+    
+    /// State of the refresh control
+    private var state = MAGearRefreshState.Normal
+    
+    /// Delegate conforming to the MAGearRefreshDelegate protocol. Most of time it's an UITableViewController
+    var delegate:MAGearRefreshDelegate?
+    
+    /// Content offset of the tableview
+    private var contentOffset:CGFloat = 0
+    
+    /// Variable used to allow the end of the refresh
+    /// We must wait for the end of the animation of the contentInset before allowing the refresh
+    private var endRefreshAllowed = false
+    
+    /// Variable used to know if the end of the refresh has been asked
+    private var endRefreshAsked = false
+    
+    
+    
+    
+    //MARK: Various methods
+    
+    /// Set the state of the refresh control.
+    ///
+    /// :param: aState New state of the refresh control.
+    private func setState(aState:MAGearRefreshState) {
+        NSLog("setState : \(aState.rawValue)")
+        switch aState {
+            
+        case .Loading:
+            self.rotate()
+            if style == .SingleGear {
+                
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    for i in 1..<self.arrayViews.count {
+                        self.arrayViews[i].alpha = 0
+                        
+                    } }, completion:nil)
+            }
+            
+            break
+        default:
+            break
+        }
+        state = aState
     }
     
     
@@ -639,7 +662,7 @@ class MAGearRefreshControl: MAMultiGearView {
         
         if scrollView.contentOffset.y <= -65.0 && !loading {
             
-            self.stopRotating = false
+            self.stopRotation = false
             delegate?.MAGearRefreshTableHeaderDidTriggerRefresh(self)
             
             setState(.Loading)
@@ -699,7 +722,7 @@ class MAGearRefreshControl: MAMultiGearView {
                     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
                     }, completion: { (finished) -> Void in
                         self.setState(.Normal)
-                        self.stopRotating = true
+                        self.stopRotation = true
                         for view in self.arrayViews {
                             view.alpha = 1
                             view.transform = CGAffineTransformIdentity
@@ -754,5 +777,17 @@ class MAGearRefreshControl: MAMultiGearView {
         
         leftBorderView.frame    = CGRectMake(barMargin, frame.height - contentOffset, barWidth, contentOffset)
         rightBorderView.frame   = CGRectMake(frame.size.width - barMargin - barWidth, frame.height - contentOffset, barWidth, contentOffset)
+    }
+    
+    //MARK: Public methods override
+    
+    /// Override of startRotating in order to disable this portion of code (must be triggered from the tableview)
+    override func startRotating() {
+        
+    }
+    
+    /// Override of stopRotating in order to disable this portion of code (must be triggered from delegate)
+    override func stopRotating()
+    {
     }
 }

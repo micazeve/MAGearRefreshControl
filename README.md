@@ -3,6 +3,12 @@ MAGearRefreshControl is a fully customizable iOS refresh control with gear anima
 
 ![MAGearRefreshControl](Screenshots/Anim.gif "MAGearRefreshControl")
 
+
+##**Edit from 23/06/15:**
+
+An intermediate class, `MAAnimatedMultiGearView`, was added in order to animate rotation without having to use an
+`MAGearRefreshControl` object.
+
 ##**Credits:**
 
 This project is inspired by this [dribble post](https://dribbble.com/shots/1974767-gear-powered-pull-to-refresh-animation).
@@ -14,9 +20,10 @@ The main structure of the refresh Control is based on [EGOTableViewPullRefresh](
 MAGearRefreshControl is made of four base classes you can use as you wish :
 
 * **MAGear** :  This class represents a gear in the most abstract way, without any graphical code related.
-* **MASingleGearView** : This class is used to draw a gear in a `UIView`.
-* **MAMultiGearView** : This class is used to draw multiples gears in a `UIView`.
-* **MAGearRefreshControl** :  This class is used to draw an animated group of gears and offers the same interactions as an `UIRefreshControl`.
+* **MASingleGearView** : This `UIView` subclass is used to draw a gear.
+* **MAMultiGearView** : This `UIView` subclass is used to draw multiples gears.
+* **MAAnimatedMultiGearView** :  This `MAMultiGearView` subclass is used to draw and animate multiple gears
+* **MAGearRefreshControl** : This `MAAnimatedMultiGearView` subclass is used to draw multiples gears and offers the same interactions as an `UIRefreshControl`.
 
 ###Refresh control###
 
