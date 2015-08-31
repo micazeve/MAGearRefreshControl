@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83D12D171B9458B5003806FF /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D12D161B9458B5003806FF /* DemoViewController.swift */; };
 		83D9CA261B0CC44D00ECA1F5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D9CA251B0CC44D00ECA1F5 /* AppDelegate.swift */; };
 		83D9CA2B1B0CC44D00ECA1F5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83D9CA291B0CC44D00ECA1F5 /* Main.storyboard */; };
 		83D9CA2D1B0CC44D00ECA1F5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D9CA2C1B0CC44D00ECA1F5 /* Images.xcassets */; };
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		83D12D161B9458B5003806FF /* DemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
 		83D9CA201B0CC44D00ECA1F5 /* MAGearRefreshControl-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MAGearRefreshControl-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D9CA241B0CC44D00ECA1F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D9CA251B0CC44D00ECA1F5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				83D9CA471B0CC47800ECA1F5 /* Extensions */,
 				83D9CA481B0CC48000ECA1F5 /* MAGearRegreshControl */,
 				83D9CA4B1B0CC50A00ECA1F5 /* DemoTableViewController.swift */,
+				83D12D161B9458B5003806FF /* DemoViewController.swift */,
 				83D9CA251B0CC44D00ECA1F5 /* AppDelegate.swift */,
 				83D9CA291B0CC44D00ECA1F5 /* Main.storyboard */,
 				83D9CA2E1B0CC44D00ECA1F5 /* LaunchScreen.xib */,
@@ -238,6 +241,7 @@
 				83D9CA261B0CC44D00ECA1F5 /* AppDelegate.swift in Sources */,
 				83D9CA4A1B0CC48E00ECA1F5 /* MAGearRefreshControl.swift in Sources */,
 				83D9CA461B0CC46800ECA1F5 /* UIColor + RGBInit.swift in Sources */,
+				83D12D171B9458B5003806FF /* DemoViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
