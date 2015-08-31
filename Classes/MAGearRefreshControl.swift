@@ -486,12 +486,13 @@ class MAAnimatedMultiGearView: MAMultiGearView {
         
         let ratio = CGFloat(arrayViews[gearLinked].gear.nbTeeth) / CGFloat(arrayViews[arrayViews.count - 1].gear.nbTeeth)
         let newAngle = -1 * arrayOfRotationAngle[gearLinked] * ratio
-        
+        /*
         NSLog("addLinkedGear \(gearLinked) , \(nbTeeth) , \(angleInDegree)")
         
         NSLog("     angleOtherGear : \(arrayOfRotationAngle[gearLinked])")
         NSLog("     ratio : \(ratio)")
         NSLog("     newAngle : \(newAngle)")
+        */
         
         arrayOfRotationAngle.append(newAngle)
         
@@ -511,7 +512,10 @@ class MAAnimatedMultiGearView: MAMultiGearView {
         if !stopRotation {
             
             let duration = NSTimeInterval(1/divisionFactor)
-            
+            /*
+            NSLog("rotation 0 \(self.arrayOfRotationAngle[0] / 180 * CGFloat(M_PI) / self.divisionFactor)" )
+            NSLog(" -> duration : \(duration)")
+            */
             UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
                 
                 switch self.style {
@@ -528,6 +532,7 @@ class MAAnimatedMultiGearView: MAMultiGearView {
                 
                 
                 }, completion: { (finished) -> Void in
+                   // NSLog("     -> completion \(finished)")
                     self.rotate()
             })
         }
@@ -646,7 +651,9 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
             }
             var phase = -Double(scrollView.contentOffset.y/20)
             phase -= Double(Int(phase))
-            setMainGearPhase(phase)
+            if stopRotation {
+                setMainGearPhase(phase)
+            }
         }
     }
     
@@ -654,6 +661,13 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     ///
     /// :param: scrollView The scrollview.
     func MAGearRefreshScrollViewDidEndDragging(scrollView:UIScrollView) {
+        
+        NSLog("MAGearRefreshScrollViewDidEndDragging")
+        /*if state == .Loading {
+            NSLog("return")
+            return
+        }*/
+        
         var loading = false
         
         if let load = delegate?.MAGearRefreshTableHeaderDataSourceIsLoading(self) {
@@ -670,8 +684,9 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
             var contentOffset = scrollView.contentOffset
             
             UIView.animateWithDuration(0.2, animations: { () -> Void in
+               
                 scrollView.contentInset = UIEdgeInsetsMake(60, 0, 0, 0)
-                scrollView.contentOffset = contentOffset;           // Workaround for smooth transition on iOS8
+                scrollView.contentOffset = contentOffset;          // Workaround for smooth transition on iOS8
                 }, completion: { (completed) -> Void in
                     NSLog("completed")
                     var dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.6 * Double(NSEC_PER_SEC)))
@@ -696,11 +711,16 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     /// :param: scrollView The scrollview.
     func MAGearRefreshScrollViewDataSourceDidFinishedLoading(scrollView:UIScrollView) {
         
+        NSLog("MAGearRefreshScrollViewDataSourceDidFinishedLoading")
+        
         if !endRefreshAllowed {
             endRefreshAsked = true
             return
         }
         endRefreshAllowed = false
+        self.setState(.Normal)
+        
+        scrollView.userInteractionEnabled = false
         
         UIView.animateWithDuration(0.1, animations: { () -> Void in
             self.arrayViews[0].transform = CGAffineTransformMakeScale(1.2, 1.2)
@@ -717,12 +737,12 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
                     
                     self.arrayViews[0].transform = CGAffineTransformMakeScale(0.1, 0.1)
                 })
-                
                 UIView.animateWithDuration(0.3, delay: 0.1, options: .CurveLinear, animations: { () -> Void in
                     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+                    scrollView.contentOffset = CGPointMake(0, 0);          // Workaround for smooth transition on iOS8
                     }, completion: { (finished) -> Void in
-                        self.setState(.Normal)
                         self.stopRotation = true
+                        scrollView.userInteractionEnabled = true
                         for view in self.arrayViews {
                             view.alpha = 1
                             view.transform = CGAffineTransformIdentity
