@@ -27,7 +27,7 @@ MAGearRefreshControl is made of four base classes you can use as you wish :
 
 ###Refresh control###
 
-`MAGearRefreshControl` must be used from an `UITableViewController`
+`MAGearRefreshControl` must be used from an `UITableViewController` subclass or `UIViewController` subclass.
 
 
     refreshControl = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
