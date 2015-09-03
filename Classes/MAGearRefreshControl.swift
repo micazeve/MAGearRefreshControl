@@ -18,14 +18,14 @@ import UIKit
     
     /// Method called when the pull to refresh move was triggered.
     ///
-    /// :param: view The MAGearRefreshControl object.
+    /// - parameter view: The MAGearRefreshControl object.
     func MAGearRefreshTableHeaderDidTriggerRefresh(view:MAGearRefreshControl)
     
     /// Method called to know if the data source is loading or no
     ///
-    /// :param: view The MAGearRefreshControl object.
+    /// - parameter view: The MAGearRefreshControl object.
     ///
-    /// :returns: true if the datasource is loading, false otherwise
+    /// - returns: true if the datasource is loading, false otherwise
     func MAGearRefreshTableHeaderDataSourceIsLoading(view:MAGearRefreshControl) -> Bool
 }
 
@@ -57,8 +57,8 @@ class MAGear {
     
     /// Init method.
     ///
-    /// :param: radius of the gear
-    /// :param: nbTeeth Number of teeth of the gear. Must be greater than 2.
+    /// - parameter radius: of the gear
+    /// - parameter nbTeeth: Number of teeth of the gear. Must be greater than 2.
     init (radius:CGFloat, nbTeeth:UInt) {
         
         assert(nbTeeth > 2)
@@ -93,8 +93,8 @@ class MASingleGearView : UIView {
     
     /// Custom init method
     ///
-    /// :param: gear Gear linked to this view
-    /// :param: gearColor Color of the gear
+    /// - parameter gear: Gear linked to this view
+    /// - parameter gearColor: Color of the gear
     init(gear:MAGear, gearColor:UIColor) {
         
         var width = Int(gear.outsideDiameter + 1)
@@ -110,7 +110,7 @@ class MASingleGearView : UIView {
     }
     
     /// Required initializer
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -118,7 +118,7 @@ class MASingleGearView : UIView {
     
     /// Override of drawing method
     override func drawRect(rect: CGRect) {
-        let baseSpace = CGColorSpaceCreateDeviceRGB()
+        _ = CGColorSpaceCreateDeviceRGB()
         let currentContext = UIGraphicsGetCurrentContext()
         CGContextClearRect(currentContext, rect)
         
@@ -247,7 +247,7 @@ class MAMultiGearView : UIView {
     }
     
     /// Required initializer
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -256,12 +256,12 @@ class MAMultiGearView : UIView {
     
     /// Add the initial gear to the view. It is always centered in the view.
     ///
-    /// :param: nbTeeth Number of teeth of the gear.
-    /// :param: color Color of the gear.
-    /// :param: radius Radius in pixel of the gear
+    /// - parameter nbTeeth: Number of teeth of the gear.
+    /// - parameter color: Color of the gear.
+    /// - parameter radius: Radius in pixel of the gear
     ///
-    /// :returns: true if the gear was succesfully created, false otherwise (if at least one gear exists).
-    func addInitialGear(#nbTeeth:UInt, color: UIColor, radius:CGFloat) -> Bool {
+    /// - returns: true if the gear was succesfully created, false otherwise (if at least one gear exists).
+    func addInitialGear(nbTeeth nbTeeth:UInt, color: UIColor, radius:CGFloat) -> Bool {
         
         if arrayViews.count > 0  {
             return false
@@ -283,12 +283,12 @@ class MAMultiGearView : UIView {
     }
     /// Add another gear to the view and link it to another already existing gear
     ///
-    /// :param: gearLinked Index of the previously created gear
-    /// :param: nbTeeth Number of teeth of the gear.
-    /// :param: color Color of the gear.
-    /// :param: angleInDegree Angle (in degree) between the gear to create and the previous gear, according to the unit circle.
+    /// - parameter gearLinked: Index of the previously created gear
+    /// - parameter nbTeeth: Number of teeth of the gear.
+    /// - parameter color: Color of the gear.
+    /// - parameter angleInDegree: Angle (in degree) between the gear to create and the previous gear, according to the unit circle.
     ///
-    /// :returns: true if the gear was succesfully created, false otherwise (if the gearLinked index is incorrect).
+    /// - returns: true if the gear was succesfully created, false otherwise (if the gearLinked index is incorrect).
     func addLinkedGear(gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
         
         if gearLinked >= arrayViews.count || gearLinked < 0 {
@@ -308,10 +308,10 @@ class MAMultiGearView : UIView {
         let yValue = CGFloat(-dist*sin(angleInDegree*M_PI/180))
         
         
-        var angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
+        let angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
         
-        var nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
-        var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
+        let nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
+        let phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
         
         
         var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
@@ -320,9 +320,9 @@ class MAMultiGearView : UIView {
         }
         phaseNewGearForAngle = phaseNewGearForAngle - trunc(phaseNewGearForAngle)
         
-        var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
-        var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
-        var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
+        let angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
+        let nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
+        let phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
         
         
         let view = MASingleGearView(gear: gear, gearColor:color)
@@ -340,7 +340,7 @@ class MAMultiGearView : UIView {
     
     /// Set the phase for the first gear and calculate it for all the linked gears
     ///
-    /// :param: phase Phase between 0 and 1 for the first gear.
+    /// - parameter phase: Phase between 0 and 1 for the first gear.
     func setMainGearPhase(phase:Double) {
         if arrayViews.count == 0  {
             return
@@ -370,7 +370,7 @@ class MAMultiGearView : UIView {
             let angleBetweenMainTeethsInDegree = 360/Double(linkedGear.nbTeeth)
             
             let nbDentsPassees = angleInDegree / angleBetweenMainTeethsInDegree
-            var phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
+            let phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
             
             var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
             if gear.nbTeeth%2 == 1 {
@@ -378,10 +378,10 @@ class MAMultiGearView : UIView {
             }
             phaseNewGearForAngle = phaseNewGearForAngle - trunc(phaseNewGearForAngle)
             
-            var angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
+            let angleBetweenNewTeethsInDegree = 360/Double(gear.nbTeeth)
             
-            var nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
-            var phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
+            let nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
+            let phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
             
             
             let finalPhase = phaseNewGearForAngle - phaseForNewAngle
@@ -496,7 +496,7 @@ class MAAnimatedMultiGearView: MAMultiGearView {
         
         arrayOfRotationAngle.append(newAngle)
         
-        var angleScaled = 1+floor(abs(newAngle)/180)
+        let angleScaled = 1+floor(abs(newAngle)/180)
         
         if angleScaled > divisionFactor {
             divisionFactor = angleScaled
@@ -526,8 +526,6 @@ class MAAnimatedMultiGearView: MAMultiGearView {
                         let view = self.arrayViews[i]
                         view.transform = CGAffineTransformRotate(view.transform, self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI) / self.divisionFactor)
                     }
-                default:
-                    break
                 }
                 
                 
@@ -590,7 +588,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     
     /// Set the state of the refresh control.
     ///
-    /// :param: aState New state of the refresh control.
+    /// - parameter aState: New state of the refresh control.
     private func setState(aState:MAGearRefreshState) {
         NSLog("setState : \(aState.rawValue)")
         switch aState {
@@ -618,7 +616,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     
     /// Method to call when the scrollview was scrolled.
     ///
-    /// :param: scrollView The scrollview.
+    /// - parameter scrollView: The scrollview.
     func MAGearRefreshScrollViewDidScroll(scrollView:UIScrollView) {
         
         configureWithContentOffsetY(-scrollView.contentOffset.y)
@@ -659,7 +657,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     
     /// Method to call when the scrollview ended dragging
     ///
-    /// :param: scrollView The scrollview.
+    /// - parameter scrollView: The scrollview.
     func MAGearRefreshScrollViewDidEndDragging(scrollView:UIScrollView) {
         
         NSLog("MAGearRefreshScrollViewDidEndDragging")
@@ -681,7 +679,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
             
             setState(.Loading)
             
-            var contentOffset = scrollView.contentOffset
+            let contentOffset = scrollView.contentOffset
             
             UIView.animateWithDuration(0.2, animations: { () -> Void in
                
@@ -689,7 +687,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
                 scrollView.contentOffset = contentOffset;          // Workaround for smooth transition on iOS8
                 }, completion: { (completed) -> Void in
                     NSLog("completed")
-                    var dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.6 * Double(NSEC_PER_SEC)))
+                    let dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.6 * Double(NSEC_PER_SEC)))
                     dispatch_after(dispatchTime, dispatch_get_main_queue(), {
                         // your function here
                         self.endRefreshAllowed = true
@@ -708,7 +706,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     
     /// Method to call when the datasource finished loading
     ///
-    /// :param: scrollView The scrollview.
+    /// - parameter scrollView: The scrollview.
     func MAGearRefreshScrollViewDataSourceDidFinishedLoading(scrollView:UIScrollView) {
         
         NSLog("MAGearRefreshScrollViewDataSourceDidFinishedLoading")
@@ -757,7 +755,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     
     /// Method to configure the view with an Y offset of the scrollview
     ///
-    /// :param: offset Offset of the scrollView
+    /// - parameter offset: Offset of the scrollView
     private func configureWithContentOffsetY(offset:CGFloat)
     {
         contentOffset = offset

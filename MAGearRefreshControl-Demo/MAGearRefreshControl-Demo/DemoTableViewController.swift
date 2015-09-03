@@ -55,8 +55,8 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         
         // -- DO SOMETHING AWESOME (... or just wait 3 seconds) --
         // This is where you'll make requests to an API, reload data, or process information
-        var delayInSeconds = 1.0
-        var popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
+        let delayInSeconds = 1.0
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
         dispatch_after(popTime, dispatch_get_main_queue()) { () -> Void in
             // When done requesting/reloading/processing invoke endRefreshing, to close the control
             self.isLoading = false
@@ -98,9 +98,9 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var CellIdentifier = "Cell";
+        let CellIdentifier = "Cell";
         
-        var cell : UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as? UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier)
         
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: CellIdentifier)
