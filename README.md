@@ -1,4 +1,8 @@
 # README
+[![Version](https://img.shields.io/cocoapods/v/MAGearRefreshControl.svg?)](http://cocoapods.org/pods/MAGearRefreshControl)
+[![License](https://img.shields.io/cocoapods/l/MAGearRefreshControl.svg)](http://cocoapods.org/pods/MAGearRefreshControl)
+[![Platform](https://img.shields.io/cocoapods/p/MAGearRefreshControl.svg)](http://cocoapods.org/pods/MAGearRefreshControl)
+
 MAGearRefreshControl is a fully customizable iOS refresh control with gear animation for tableview refresh, writen in Swift.
 
 ![MAGearRefreshControl](Screenshots/Anim.gif "MAGearRefreshControl")
@@ -17,7 +21,7 @@ The main structure of the refresh Control is based on [EGOTableViewPullRefresh](
 ##**How to use:**
 
 ###Contents:###
-MAGearRefreshControl is made of four base classes you can use as you wish :
+MAGearRefreshControl is made of five base classes you can use as you wish :
 
 * **MAGear** :  This class represents a gear in the most abstract way, without any graphical code related.
 * **MASingleGearView** : This `UIView` subclass is used to draw a gear.
@@ -27,7 +31,7 @@ MAGearRefreshControl is made of four base classes you can use as you wish :
 
 ###Refresh control###
 
-`MAGearRefreshControl` must be used from an `UITableViewController` subclass or `UIViewController` subclass.
+`MAGearRefreshControl` must be used from an `UITableViewController` subclass or `UIViewController` subclass with an `UITableView`. Examples are provided for both cases.
 
 
     refreshControl = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
