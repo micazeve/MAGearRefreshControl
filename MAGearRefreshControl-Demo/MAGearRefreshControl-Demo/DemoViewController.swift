@@ -33,8 +33,8 @@ class DemoViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
         refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: 30)
-        refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190)
-        refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30)
+        refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: 190, gearStyle: .WithBranchs)
+        refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.4), angleInDegree: -30, gearStyle: .WithBranchs, nbBranches:12)
         refreshControlView.addLinkedGear(2, nbTeeth:24, color: UIColor.initRGB(92, g: 133, b: 236).colorWithAlphaComponent(0.8), angleInDegree: -190)
         refreshControlView.addLinkedGear(3, nbTeeth:10, color: UIColor.initRGB(92, g: 133, b: 236), angleInDegree: 40)
         refreshControlView.setMainGearPhase(0)
@@ -60,8 +60,8 @@ class DemoViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         // -- DO SOMETHING AWESOME (... or just wait 3 seconds) --
         // This is where you'll make requests to an API, reload data, or process information
-        var delayInSeconds = 0.6
-        var popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
+        let delayInSeconds = 0.6
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
         dispatch_after(popTime, dispatch_get_main_queue()) { () -> Void in
             // When done requesting/reloading/processing invoke endRefreshing, to close the control
             self.isLoading = false
@@ -103,9 +103,9 @@ class DemoViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var CellIdentifier = "Cell";
+        let CellIdentifier = "Cell";
         
-        var cell : UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as? UITableViewCell
+        var cell : UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(CellIdentifier)
         
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: CellIdentifier)
