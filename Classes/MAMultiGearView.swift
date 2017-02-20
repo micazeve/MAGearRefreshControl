@@ -11,7 +11,7 @@ import UIKit
 //MARK: - MAMultiGearView Class
 
 /// This class is used to draw multiples gears in a UIView.
-class MAMultiGearView : UIView {
+public class MAMultiGearView : UIView {
     
     //MARK: Instance properties
     
@@ -61,7 +61,7 @@ class MAMultiGearView : UIView {
     //MARK: Init methods
     
     /// Default initializer
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         
         clipsToBounds = true
@@ -78,7 +78,7 @@ class MAMultiGearView : UIView {
     }
     
     /// Required initializer
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -92,7 +92,7 @@ class MAMultiGearView : UIView {
     /// - parameter radius: Radius in pixel of the gear
     ///
     /// - returns: true if the gear was succesfully created, false otherwise (if at least one gear exists).
-    func addInitialGear(nbTeeth:UInt, color: UIColor, radius:CGFloat) -> Bool {
+    public func addInitialGear(nbTeeth:UInt, color: UIColor, radius:CGFloat) -> Bool {
         
         if arrayViews.count > 0  {
             return false
@@ -120,7 +120,7 @@ class MAMultiGearView : UIView {
     /// - parameter angleInDegree: Angle (in degree) between the gear to create and the previous gear, according to the unit circle.
     ///
     /// - returns: true if the gear was succesfully created, false otherwise (if the gearLinked index is incorrect).
-    func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
+    public func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
         
         if gearLinked >= arrayViews.count || gearLinked < 0 {
             return false
@@ -172,7 +172,7 @@ class MAMultiGearView : UIView {
     /// Set the phase for the first gear and calculate it for all the linked gears
     ///
     /// - parameter phase: Phase between 0 and 1 for the first gear.
-    func setMainGearPhase(_ phase:Double) {
+    public func setMainGearPhase(_ phase:Double) {
         if arrayViews.count == 0  {
             return
         }
@@ -269,7 +269,7 @@ class MAMultiGearView : UIView {
     
     //MARK: Override setFrame
     
-    override var frame:CGRect  {
+    override public var frame:CGRect  {
         didSet {
             configureView()
         }

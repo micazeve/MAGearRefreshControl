@@ -12,7 +12,7 @@ import UIKit
 //MARK: - MASingleGearView Class
 
 /// This class is used to draw a gear in a UIView.
-class MASingleGearView : UIView {
+public class MASingleGearView : UIView {
     
     //MARK: Instance properties
     
@@ -20,12 +20,12 @@ class MASingleGearView : UIView {
     internal var gear:MAGear!
     
     /// Color of the gear.
-    var gearColor = UIColor.black
+    public var gearColor = UIColor.black
     
     /// Phase of the gear. Varies between 0 and 1.
     /// A phase of 0 represents a gear with the rightmost tooth fully horizontal, while a phase of 0.5 represents a gear with a hole in the rightmost point.
     /// A phase of 1 thus is graphically equivalent to a phase of 0
-    var phase:Double = 0
+    public var phase:Double = 0
     
     //MARK: Init methods
     
@@ -33,7 +33,7 @@ class MASingleGearView : UIView {
     ///
     /// - parameter gear: Gear linked to this view
     /// - parameter gearColor: Color of the gear
-    init(gear:MAGear, gearColor:UIColor) {
+    public init(gear:MAGear, gearColor:UIColor) {
         
         var width = Int(gear.outsideDiameter + 1)
         if width%2 == 1 {
@@ -48,14 +48,14 @@ class MASingleGearView : UIView {
     }
     
     /// Required initializer
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     //MARK: Drawing methods
     
     /// Override of drawing method
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         _ = CGColorSpaceCreateDeviceRGB()
         let currentContext = UIGraphicsGetCurrentContext()
         currentContext?.clear(rect)

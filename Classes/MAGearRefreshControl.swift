@@ -12,8 +12,8 @@ import UIKit
 
 
 /// Protocol between the MAGearRefreshControl and its delegate (mostly UITableViewController).
-@objc protocol MAGearRefreshDelegate {
-    
+ @objc public protocol MAGearRefreshDelegate {
+
     /// Method called when the pull to refresh move was triggered.
     ///
     /// - parameter view: The MAGearRefreshControl object.
@@ -33,12 +33,12 @@ import UIKit
 //MARK: - MAGearRefreshControl Class
 
 /// This class is used to draw an animated group of gears and offers the same interactions as an UIRefreshControl
-class MAGearRefreshControl: MAAnimatedMultiGearView {
+public class MAGearRefreshControl: MAAnimatedMultiGearView {
     
     //MARK: Instance properties
     
     /// Enum representing the different state of the refresh control
-    enum MAGearRefreshState: UInt8 {
+    public enum MAGearRefreshState: UInt8 {
         case normal         // The user is pulling but hasn't reach the activation threshold yet
         case pulling        // The user is still pulling and has passed the activation threshold
         case loading        // The refresh control is animating
@@ -48,7 +48,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     fileprivate var state = MAGearRefreshState.normal
     
     /// Delegate conforming to the MAGearRefreshDelegate protocol. Most of time it's an UITableViewController
-    var delegate:MAGearRefreshDelegate?
+    public var delegate:MAGearRefreshDelegate?
     
     /// Content offset of the tableview
     fileprivate var contentOffset:CGFloat = 0
@@ -96,7 +96,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     /// Method to call when the scrollview was scrolled.
     ///
     /// - parameter scrollView: The scrollview.
-    func MAGearRefreshScrollViewDidScroll(_ scrollView:UIScrollView) {
+    public func MAGearRefreshScrollViewDidScroll(_ scrollView:UIScrollView) {
         
         configureWithContentOffsetY(-scrollView.contentOffset.y)
         
@@ -137,7 +137,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     /// Method to call when the scrollview ended dragging
     ///
     /// - parameter scrollView: The scrollview.
-    func MAGearRefreshScrollViewDidEndDragging(_ scrollView:UIScrollView) {
+    public func MAGearRefreshScrollViewDidEndDragging(_ scrollView:UIScrollView) {
         
         NSLog("MAGearRefreshScrollViewDidEndDragging")
         /*if state == .Loading {
@@ -186,7 +186,7 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     /// Method to call when the datasource finished loading
     ///
     /// - parameter scrollView: The scrollview.
-    func MAGearRefreshScrollViewDataSourceDidFinishedLoading(_ scrollView:UIScrollView) {
+    public func MAGearRefreshScrollViewDataSourceDidFinishedLoading(_ scrollView:UIScrollView) {
         
         NSLog("MAGearRefreshScrollViewDataSourceDidFinishedLoading")
         
@@ -279,12 +279,12 @@ class MAGearRefreshControl: MAAnimatedMultiGearView {
     //MARK: Public methods override
     
     /// Override of startRotating in order to disable this portion of code (must be triggered from the tableview)
-    override func startRotating() {
+    override public func startRotating() {
         
     }
     
     /// Override of stopRotating in order to disable this portion of code (must be triggered from delegate)
-    override func stopRotating()
+    override public func stopRotating()
     {
     }
 }

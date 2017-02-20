@@ -11,7 +11,7 @@ import UIKit
 //MARK: - MAGear Class
 
 /// This class represents a gear in the most abstract way, without any graphical code related.
-internal class MAGear {
+public class MAGear {
     
     //MARK: Instance properties
     
@@ -37,7 +37,7 @@ internal class MAGear {
     ///
     /// - parameter radius: of the gear
     /// - parameter nbTeeth: Number of teeth of the gear. Must be greater than 2.
-    init (radius:CGFloat, nbTeeth:UInt) {
+    public init (radius:CGFloat, nbTeeth:UInt) {
         
         assert(nbTeeth > 2)
         

@@ -12,7 +12,7 @@ import UIKit
 
 /// This class is used to draw and animate multiple gears
 
-class MAAnimatedMultiGearView: MAMultiGearView {
+public class MAAnimatedMultiGearView: MAMultiGearView {
     
     //MARK: Instance properties
     
@@ -38,7 +38,7 @@ class MAAnimatedMultiGearView: MAMultiGearView {
     //MARK: Various methods
     
     /// Override of the `addLinkedGear` method in order to update the array of rotational angle when a gear is added
-    override func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
+    override public func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
         
         if !super.addLinkedGear(gearLinked, nbTeeth: nbTeeth, color: color, angleInDegree: angleInDegree) {
             return false
@@ -97,14 +97,14 @@ class MAAnimatedMultiGearView: MAMultiGearView {
     }
     
     /// Public method to start rotating
-    func startRotating() {
+    public func startRotating() {
         stopRotation = false
         rotate()
     }
     
     
     /// Public method to start rotating
-    func stopRotating() {
+    public func stopRotating() {
         stopRotation = true
     }
 }
