@@ -7,6 +7,10 @@ MAGearRefreshControl is a fully customizable iOS refresh control with gear anima
 
 ![MAGearRefreshControl](Screenshots/Anim.gif "MAGearRefreshControl")
 
+##**Edit from 20/02/17:**
+
+This component is now compatible with Swift 3.0. The `swift-2.0` branch is still available.
+
 ##**Edit from 16/11/15:**
 
 A new enum, `MAGearStyle`, was added in order to custom single gears within the gear group.
@@ -44,16 +48,16 @@ MAGearRefreshControl is made of five base classes you can use as you wish :
 `MAGearRefreshControl` must be used from an `UITableViewController` subclass or `UIViewController` subclass with an `UITableView`. Examples are provided for both cases.
 
 
-    refreshControl = MAGearRefreshControl(frame: CGRectMake(0, -self.tableView.bounds.height, self.view.frame.width, self.tableView.bounds.height))
+    refreshControl = MAGearRefreshControl(frame: CGRect(x: 0, y: -self.myTableView.bounds.height, width: self.view.frame.width, height: self.myTableView.bounds.height))
     refreshControl.backgroundColor =  UIColor.initRGB(34, g: 75, b: 150)
-    refreshControl.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
+    _ = refreshControl.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
     refreshControl.delegate = self
     self.tableView.addSubview(refreshControl)
 
 You can add new gears easily with a single method :
 
-    refreshControl.addLinkedGear(0, nbTeeth:16, color: UIColor.blurColor(), angleInDegree: 30)
-    refreshControl.addLinkedGear(0, nbTeeth:32, color: UIColor.redColor(), angleInDegree: 190)
+    _ = refreshControl.addLinkedGear(0, nbTeeth:16, color: UIColor.blue, angleInDegree: 30)
+    _ = refreshControl.addLinkedGear(0, nbTeeth:32, color: UIColor.red, angleInDegree: 190)
     
     // Gear with branch style :
     refreshControl.addLinkedGear(1, nbTeeth:14, color: yellowColor(), angleInDegree: 20, gearStyle: .WithBranchs)
@@ -65,12 +69,12 @@ You can add new gears easily with a single method :
 Now you have to respect the `MAGearRefreshDelegate` protocol :
 
     // Method called to know if the data source is loading or no
-    func MAGearRefreshTableHeaderDataSourceIsLoading(view: MAGearRefreshControl) -> Bool {
+    func MAGearRefreshTableHeaderDataSourceIsLoading(_ view: MAGearRefreshControl) -> Bool {
         return isLoading
     }
 
     // Method called when the pull to refresh move was triggered.
-    func MAGearRefreshTableHeaderDidTriggerRefresh(view: MAGearRefreshControl) {
+    func MAGearRefreshTableHeaderDidTriggerRefresh(_ view: MAGearRefreshControl) {
         refresh()
     }
 
