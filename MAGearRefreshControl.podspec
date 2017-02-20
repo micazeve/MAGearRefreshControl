@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MAGearRefreshControl"
-  s.version      = "0.3"
+  s.version      = "1.0.0"
   s.summary      = "Refresh control with gear animation."
 
   s.description  = <<-DESC
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.social_media_url   = "https://twitter.com/micazeve"
   s.platforms	 = { :ios => "8.0" }
 
-  s.source       = { :git => "https://github.com/micazeve/MAGearRefreshControl.git", :branch => "master", :tag => '0.3'}
+  s.source       = { :git => "https://github.com/micazeve/MAGearRefreshControl.git", :branch => "master", :tag => '1.0.0'}
   s.source_files = "Classes/**/*.swift"
 
   s.ios.deployment_target = '8.0'

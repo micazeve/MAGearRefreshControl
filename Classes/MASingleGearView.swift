@@ -27,24 +27,44 @@ public class MASingleGearView : UIView {
     /// A phase of 1 thus is graphically equivalent to a phase of 0
     public var phase:Double = 0
     
+   /// Enum representing the style of the Gear
+    public enum MAGearStyle: UInt8 {
+        case Normal         // Default style, full gear
+        case WithBranchs    // With `nbBranches` inside the gear
+    }
+   
+    /// Style of the gear
+    let style:MAGearStyle
+    
+    /// Number of branches inside the gear.
+    /// Ignored if style == .Normal.
+    /// Default value is 5.
+    let nbBranches:UInt
+    
     //MARK: Init methods
     
     /// Custom init method
     ///
     /// - parameter gear: Gear linked to this view
-    /// - parameter gearColor: Color of the gear
-    public init(gear:MAGear, gearColor:UIColor) {
+    /// - parameter gearColor: Color of the gear 
+    /// - parameter style: Style of the gear
+    /// - parameter nbBranches: Number of branches if the gear style is 'WithBranches'
+    
+    public init(gear:MAGear, gearColor:UIColor, style:MAGearStyle = .Normal, nbBranches:UInt = 5) {
         
         var width = Int(gear.outsideDiameter + 1)
         if width%2 == 1 {
             width += 1
         }
         
+        self.style = style
+        self.gearColor = gearColor
+        self.nbBranches = nbBranches
+        self.gear = gear
+        
         super.init(frame: CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(width)))
         
         self.backgroundColor = UIColor.clear
-        self.gearColor = gearColor
-        self.gear = gear
     }
     
     /// Required initializer
@@ -68,6 +88,48 @@ public class MASingleGearView : UIView {
         currentContext?.translateBy(x: rect.width/2, y: rect.height/2)
         currentContext?.addEllipse(in: CGRect(x: -insideRadius/3, y: -insideRadius/3, width: insideRadius*2/3, height: insideRadius*2/3));
         currentContext?.addEllipse(in: CGRect(x: -insideRadius, y: -insideRadius, width: insideRadius*2, height: insideRadius*2));
+        
+        
+        if style == .WithBranchs {
+            
+            let rayon1 = insideRadius*5/10
+            let rayon2 = insideRadius*8/10
+            
+            let angleBig        = Double(360/nbBranches) * M_PI / 180
+            let angleSmall      = Double(min(10, 360/nbBranches/6)) * M_PI / 180
+            
+            let originX = rayon1 * CGFloat(cos(angleSmall))
+            let originY = -rayon1 * CGFloat(sin(angleSmall))
+            
+            let finX = sqrt(rayon2*rayon2 - originY*originY)
+            
+            let angle2 = Double(acos(finX/rayon2))
+            
+            let originX2 = rayon1 * CGFloat(cos(angleBig - angleSmall))
+            let originY2 = -rayon1 * CGFloat(sin(angleBig - angleSmall))
+            
+            
+            for i in 0..<nbBranches {
+                // Saving the context before rotating it
+                currentContext?.saveGState()
+                
+                let gearOriginAngle =  CGFloat((Double(i)) * M_PI * 2 / Double(nbBranches))
+                
+                currentContext?.rotate(by: gearOriginAngle)
+                currentContext?.move(to: CGPoint(x: originX, y: originY))
+                currentContext?.addLine(to: CGPoint(x: finX, y: originY))
+                currentContext?.addArc(center: CGPoint.zero, radius: rayon2, startAngle: -CGFloat(angle2), endAngle: -CGFloat(angleBig - angle2), clockwise: true)
+                
+                currentContext?.addLine(to: CGPoint(x: originX2, y: originY2))
+                
+                currentContext?.addArc(center: CGPoint.zero, radius: rayon1, startAngle: -CGFloat(angleBig -  angleSmall), endAngle: -CGFloat(angleSmall), clockwise: false)
+                currentContext?.closePath()
+                
+                currentContext?.restoreGState()
+            }
+        }
+        
+        
         currentContext?.setFillColor(self.gearColor.cgColor)
         currentContext?.fillPath(using: .evenOdd)
         

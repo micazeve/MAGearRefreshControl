@@ -118,9 +118,11 @@ public class MAMultiGearView : UIView {
     /// - parameter nbTeeth: Number of teeth of the gear.
     /// - parameter color: Color of the gear.
     /// - parameter angleInDegree: Angle (in degree) between the gear to create and the previous gear, according to the unit circle.
+    /// - parameter style: Style of the gear
+    /// - parameter nbBranches: Number of branches if the gear style is 'WithBranches'
     ///
     /// - returns: true if the gear was succesfully created, false otherwise (if the gearLinked index is incorrect).
-    public func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
+    public func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double, gearStyle:MASingleGearView.MAGearStyle = .Normal, nbBranches:UInt = 5) -> Bool {
         
         if gearLinked >= arrayViews.count || gearLinked < 0 {
             return false
@@ -156,7 +158,7 @@ public class MAMultiGearView : UIView {
         let phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))
         
         
-        let view = MASingleGearView(gear: gear, gearColor:color)
+        let view = MASingleGearView(gear: gear, gearColor:color, style:gearStyle, nbBranches: nbBranches)
         view.center = CGPoint(x: linkedGearView.center.x + xValue, y: linkedGearView.center.y + yValue)
         
         arrayRelations.append(gearLinked)
@@ -171,18 +173,14 @@ public class MAMultiGearView : UIView {
     
     /// Set the phase for the first gear and calculate it for all the linked gears
     ///
-    /// - parameter phase: Phase between 0 and 1 for the first gear.
+    /// - parameter phase: Each incrementation of the phase means the gear rotated from one tooth
     public func setMainGearPhase(_ phase:Double) {
         if arrayViews.count == 0  {
             return
         }
         
-        var newPhase = phase
-        if newPhase >= 1 {
-            newPhase = 0
-        } else if newPhase < 0 {
-            newPhase = 0
-        }
+        
+        let newPhase = phase
         
         arrayViews[0].phase = newPhase
         
@@ -204,12 +202,14 @@ public class MAMultiGearView : UIView {
             let phaseForAngle = nbDentsPassees -  Double(Int(nbDentsPassees))
             
             var phaseNewGearForAngle = 0.5 + phaseForAngle - linkedGearView.phase
+            
+            
             if (gear?.nbTeeth)!%2 == 1 {
-                phaseNewGearForAngle += 0.5
+                 phaseNewGearForAngle += 0.5
             }
-            phaseNewGearForAngle = phaseNewGearForAngle - trunc(phaseNewGearForAngle)
             
             let angleBetweenNewTeethsInDegree = 360/Double((gear?.nbTeeth)!)
+            
             
             let nbNewDentsPassees = angleInDegree / angleBetweenNewTeethsInDegree
             let phaseForNewAngle = 1-(nbNewDentsPassees -  Double(Int(nbNewDentsPassees)))

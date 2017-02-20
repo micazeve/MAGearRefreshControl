@@ -126,8 +126,9 @@ public class MAGearRefreshControl: MAAnimatedMultiGearView {
                     scrollView.contentInset = UIEdgeInsets.zero;
                 }
             }
-            var phase = -Double(scrollView.contentOffset.y/20)
-            phase -= Double(Int(phase))
+            
+             let phase = -Double(scrollView.contentOffset.y/20)
+            
             if stopRotation {
                 setMainGearPhase(phase)
             }

@@ -27,8 +27,8 @@ class DemoTableViewController: UITableViewController, MAGearRefreshDelegate {
         
         _ = refreshControlView.addInitialGear(nbTeeth:12, color: UIColor.initRGB(92, g: 133, b: 236), radius:16)
         _ = refreshControlView.addLinkedGear(0, nbTeeth:16, color: UIColor.initRGB(92, g: 133, b: 236).withAlphaComponent(0.8), angleInDegree: 30)
-        _ = refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).withAlphaComponent(0.4), angleInDegree: 190)
-        _ = refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).withAlphaComponent(0.4), angleInDegree: -30)
+        _ = refreshControlView.addLinkedGear(0, nbTeeth:32, color: UIColor.initRGB(92, g: 133, b: 236).withAlphaComponent(0.4), angleInDegree: 190, gearStyle: .WithBranchs)
+        _ = refreshControlView.addLinkedGear(1, nbTeeth:40, color: UIColor.initRGB(92, g: 133, b: 236).withAlphaComponent(0.4), angleInDegree: -30, gearStyle: .WithBranchs, nbBranches:12)
         _ = refreshControlView.addLinkedGear(2, nbTeeth:24, color: UIColor.initRGB(92, g: 133, b: 236).withAlphaComponent(0.8), angleInDegree: -190)
         _ = refreshControlView.addLinkedGear(3, nbTeeth:10, color: UIColor.initRGB(92, g: 133, b: 236), angleInDegree: 40)
         refreshControlView.setMainGearPhase(0)

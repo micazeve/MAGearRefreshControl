@@ -35,12 +35,15 @@ public class MAAnimatedMultiGearView: MAMultiGearView {
     /// Variable used to rotate or no the gear
     var stopRotation = true
     
+    /// Boolean used to know if the view is already animated
+    var isRotating = false
+    
     //MARK: Various methods
     
     /// Override of the `addLinkedGear` method in order to update the array of rotational angle when a gear is added
-    override public func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double) -> Bool {
+    override public func addLinkedGear(_ gearLinked: Int, nbTeeth:UInt, color:UIColor, angleInDegree:Double, gearStyle:MASingleGearView.MAGearStyle = .Normal, nbBranches:UInt = 5) -> Bool {
         
-        if !super.addLinkedGear(gearLinked, nbTeeth: nbTeeth, color: color, angleInDegree: angleInDegree) {
+        if !super.addLinkedGear(gearLinked, nbTeeth: nbTeeth, color: color, angleInDegree: angleInDegree, gearStyle: gearStyle, nbBranches: nbBranches) {
             return false
         }
         
@@ -69,7 +72,8 @@ public class MAAnimatedMultiGearView: MAMultiGearView {
     /// Method called to rotate the main gear by 360 degree
     internal func rotate() {
         
-        if !stopRotation {
+        if !stopRotation && !isRotating {
+            isRotating = true
             
             let duration = TimeInterval(1/divisionFactor)
             /*
@@ -90,7 +94,8 @@ public class MAAnimatedMultiGearView: MAMultiGearView {
                 
                 
             }, completion: { (finished) -> Void in
-                // NSLog("     -> completion \(finished)")
+                // NSLog("     -> completion \(finished)") 
+                self.isRotating = false
                 self.rotate()
             })
         }
