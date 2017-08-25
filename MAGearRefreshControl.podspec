@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MAGearRefreshControl"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "Refresh control with gear animation."
 
   s.description  = <<-DESC
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
                     DESC
   s.homepage     = "https://github.com/micazeve/MAGearRefreshControl"
 
-  s.license      = { :type => "MIT", :file => "LICENSE.txt" }
+  s.license      = { :type => "MIT", :file => "LICENSE.MD" }
   s.author             = { "Michaël Azevedo" => "micazeve@gmail.com" }
   s.social_media_url   = "https://twitter.com/micazeve"
   s.platforms	 = { :ios => "8.0" }

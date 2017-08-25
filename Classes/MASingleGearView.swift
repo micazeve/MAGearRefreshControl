@@ -95,8 +95,8 @@ public class MASingleGearView : UIView {
             let rayon1 = insideRadius*5/10
             let rayon2 = insideRadius*8/10
             
-            let angleBig        = Double(360/nbBranches) * M_PI / 180
-            let angleSmall      = Double(min(10, 360/nbBranches/6)) * M_PI / 180
+            let angleBig        = Double(360/nbBranches) * Double.pi / 180
+            let angleSmall      = Double(min(10, 360/nbBranches/6)) * Double.pi / 180
             
             let originX = rayon1 * CGFloat(cos(angleSmall))
             let originY = -rayon1 * CGFloat(sin(angleSmall))
@@ -113,7 +113,7 @@ public class MASingleGearView : UIView {
                 // Saving the context before rotating it
                 currentContext?.saveGState()
                 
-                let gearOriginAngle =  CGFloat((Double(i)) * M_PI * 2 / Double(nbBranches))
+                let gearOriginAngle =  CGFloat((Double(i)) * Double.pi * 2 / Double(nbBranches))
                 
                 currentContext?.rotate(by: gearOriginAngle)
                 currentContext?.move(to: CGPoint(x: originX, y: originY))
@@ -133,7 +133,7 @@ public class MASingleGearView : UIView {
         currentContext?.setFillColor(self.gearColor.cgColor)
         currentContext?.fillPath(using: .evenOdd)
         
-        let angleUtile =  CGFloat(M_PI / (2 * Double(gear.nbTeeth)))
+        let angleUtile =  CGFloat(Double.pi / (2 * Double(gear.nbTeeth)))
         let angleUtileDemi = angleUtile/2
         
         // In order to draw the teeth quite easily, instead of having complexs calculations,
@@ -155,7 +155,7 @@ public class MASingleGearView : UIView {
             // Saving the context before rotating it
             currentContext?.saveGState()
             
-            let gearOriginAngle =  CGFloat((Double(i)) * M_PI * 2 / Double(gear.nbTeeth))
+            let gearOriginAngle =  CGFloat((Double(i)) * Double.pi * 2 / Double(gear.nbTeeth))
             
             currentContext?.rotate(by: gearOriginAngle)
             

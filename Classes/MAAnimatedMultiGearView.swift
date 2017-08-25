@@ -29,7 +29,7 @@ public class MAAnimatedMultiGearView: MAMultiGearView {
     /// Array of rotational angle for the refresh
     fileprivate var arrayOfRotationAngle:[CGFloat] = [180]
     
-    /// Workaround for the issue with the CGAffineTransformRotate (when angle > M_PI its rotate clockwise beacause it's shorter)
+    /// Workaround for the issue with the CGAffineTransformRotate (when angle > Double.pi its rotate clockwise beacause it's shorter)
     fileprivate var divisionFactor: CGFloat = 1
     
     /// Variable used to rotate or no the gear
@@ -77,18 +77,18 @@ public class MAAnimatedMultiGearView: MAMultiGearView {
             
             let duration = TimeInterval(1/divisionFactor)
             /*
-             NSLog("rotation 0 \(self.arrayOfRotationAngle[0] / 180 * CGFloat(M_PI) / self.divisionFactor)" )
+             NSLog("rotation 0 \(self.arrayOfRotationAngle[0] / 180 * CGFloat(Double.pi) / self.divisionFactor)" )
              NSLog(" -> duration : \(duration)")
              */
             UIView.animate(withDuration: duration, delay: 0, options: .curveLinear, animations: { () -> Void in
                 
                 switch self.style {
                 case .singleGear:
-                    self.arrayViews[0].transform = self.arrayViews[0].transform.rotated(by: self.arrayOfRotationAngle[0] / 180 * CGFloat(M_PI))
+                    self.arrayViews[0].transform = self.arrayViews[0].transform.rotated(by: self.arrayOfRotationAngle[0] / 180 * CGFloat(Double.pi))
                 case .keepGears:
                     for i in 0..<self.arrayViews.count {
                         let view = self.arrayViews[i]
-                        view.transform = view.transform.rotated(by: self.arrayOfRotationAngle[i] / 180 * CGFloat(M_PI) / self.divisionFactor)
+                        view.transform = view.transform.rotated(by: self.arrayOfRotationAngle[i] / 180 * CGFloat(Double.pi) / self.divisionFactor)
                     }
                 }
                 

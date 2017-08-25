@@ -92,7 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				83D9CA471B0CC47800ECA1F5 /* Extensions */,
-				83D9CA481B0CC48000ECA1F5 /* MAGearRegreshControl */,
+				83D9CA481B0CC48000ECA1F5 /* MAGearRefreshControl */,
 				83D9CA4B1B0CC50A00ECA1F5 /* DemoTableViewController.swift */,
 				83D12D161B9458B5003806FF /* DemoViewController.swift */,
 				83D9CA251B0CC44D00ECA1F5 /* AppDelegate.swift */,
@@ -137,7 +137,7 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
-		83D9CA481B0CC48000ECA1F5 /* MAGearRegreshControl */ = {
+		83D9CA481B0CC48000ECA1F5 /* MAGearRefreshControl */ = {
 			isa = PBXGroup;
 			children = (
 				83BF3A8E1E5AE54000E47449 /* MAGear.swift */,
@@ -146,7 +146,7 @@
 				83E95E881E5AE6F50037E7BF /* MAAnimatedMultiGearView.swift */,
 				83D9CA491B0CC48E00ECA1F5 /* MAGearRefreshControl.swift */,
 			);
-			name = MAGearRegreshControl;
+			name = MAGearRefreshControl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

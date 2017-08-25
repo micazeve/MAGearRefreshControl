@@ -137,8 +137,8 @@ public class MAMultiGearView : UIView {
         
         let dist = Double(gear.pitchDiameter + (linkedGear?.pitchDiameter)!)/2
         
-        let xValue = CGFloat(dist*cos(angleInDegree*M_PI/180))
-        let yValue = CGFloat(-dist*sin(angleInDegree*M_PI/180))
+        let xValue = CGFloat(dist*cos(angleInDegree*Double.pi/180))
+        let yValue = CGFloat(-dist*sin(angleInDegree*Double.pi/180))
         
         
         let angleBetweenMainTeethsInDegree = 360/Double((linkedGear?.nbTeeth)!)
@@ -223,7 +223,7 @@ public class MAMultiGearView : UIView {
         }
         for view in arrayViews {
             
-            let angleInRad = -view.phase * 2 * M_PI / Double(view.gear.nbTeeth)
+            let angleInRad = -view.phase * 2 * Double.pi / Double(view.gear.nbTeeth)
             view.transform = CGAffineTransform(rotationAngle: CGFloat(angleInRad))
             
         }
@@ -253,8 +253,8 @@ public class MAMultiGearView : UIView {
             let linkedGearView      = arrayViews[arrayRelations[i]]
             let linkedGear          = linkedGearView.gear
             let dist = Double((gear?.pitchDiameter)! + (linkedGear?.pitchDiameter)!)/2
-            let xValue = CGFloat(dist*cos(angleBetweenGears*M_PI/180))
-            let yValue = CGFloat(-dist*sin(angleBetweenGears*M_PI/180))
+            let xValue = CGFloat(dist*cos(angleBetweenGears*Double.pi/180))
+            let yValue = CGFloat(-dist*sin(angleBetweenGears*Double.pi/180))
             
             gearView.center = CGPoint(x: linkedGearView.center.x + xValue, y: linkedGearView.center.y + yValue)
             

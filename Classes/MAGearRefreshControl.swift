@@ -264,8 +264,8 @@ public class MAGearRefreshControl: MAAnimatedMultiGearView {
             let linkedGearView      = arrayViews[arrayRelations[i]]
             let linkedGear          = linkedGearView.gear
             let dist = Double((gear?.pitchDiameter)! + (linkedGear?.pitchDiameter)!)/2
-            let xValue = CGFloat(dist*cos(angleBetweenGears*M_PI/180))
-            let yValue = CGFloat(-dist*sin(angleBetweenGears*M_PI/180))
+            let xValue = CGFloat(dist*cos(angleBetweenGears*Double.pi/180))
+            let yValue = CGFloat(-dist*sin(angleBetweenGears*Double.pi/180))
             
             gearView.center = CGPoint(x: linkedGearView.center.x + xValue, y: linkedGearView.center.y + yValue)
             
