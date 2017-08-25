@@ -8,12 +8,12 @@ Pod::Spec.new do |s|
                     DESC
   s.homepage     = "https://github.com/micazeve/MAGearRefreshControl"
 
-  s.license      = { :type => "MIT", :file => "LICENSE.MD" }
+  s.license      = { :type => "MIT", :file => "LICENSE.md" }
   s.author             = { "Michaël Azevedo" => "micazeve@gmail.com" }
   s.social_media_url   = "https://twitter.com/micazeve"
   s.platforms	 = { :ios => "8.0" }
 
-  s.source       = { :git => "https://github.com/micazeve/MAGearRefreshControl.git", :branch => "master", :tag => '1.0.0'}
+  s.source       = { :git => "https://github.com/micazeve/MAGearRefreshControl.git", :branch => "master", :tag => '1.0.1'}
   s.source_files = "Classes/**/*.swift"
 
   s.ios.deployment_target = '8.0'
